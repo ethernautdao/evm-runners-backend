@@ -1,5 +1,6 @@
-import { Db, MongoClient } from "mongodb";
+import { Db, MongoClient, ObjectId } from "mongodb";
 import { Leaderboard } from "./model/leaderboard";
+import { Level } from "./model/level";
 
 let client: MongoClient;
 let database: Db;
@@ -20,7 +21,29 @@ export const getLeaderboard = async () => {
     }
 };
 
-const closeConnection = (_ : any) => { //Needs _ argument, otherwise it would be called after the server started for some reason...
+export const getLevels = async () => {
+    try {
+        const levels = await database.collection<Level>("Levels").find().toArray();
+        return levels;
+    } catch (_) {
+        return "No results";
+    }
+};
+
+export const getLevelById = async (id: string) => {
+    if (id !== "") {
+        try {
+            const level = await database.collection<Level>("Levels").findOne({ _id: new ObjectId(id) });
+            return level?._id;
+        } catch (_) {
+            return `No results for id ${id}`;
+        }
+    }
+
+    return "Id needed";
+};
+
+const closeConnection = (_: any) => { //Needs _ argument, otherwise it would be called after the server started for some reason...
     client.close(); // Close MongodDB Connection when Process ends
     process.exit(); // Exit with default success-code '0'.
 };

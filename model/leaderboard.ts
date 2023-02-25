@@ -1,5 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export interface Leaderboard {
-    id: number;
+    _id: ObjectId;
     user: string;
     score: number;
 };
