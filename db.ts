@@ -34,7 +34,7 @@ export const getLevelById = async (id: string) => {
     if (id !== "") {
         try {
             const level = await database.collection<Level>("Levels").findOne({ _id: new ObjectId(id) });
-            return level?._id;
+            return level;
         } catch (_) {
             return `No results for id ${id}`;
         }
