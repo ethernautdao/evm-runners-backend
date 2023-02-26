@@ -1,6 +1,7 @@
-import { Db, MongoClient, ObjectId } from "mongodb";
+import { Collection, Db, MongoClient, ObjectId } from "mongodb";
 import { Leaderboard } from "./model/leaderboard";
 import { Level } from "./model/level";
+import { Submission } from "./model/submission";
 
 let client: MongoClient;
 let database: Db;
@@ -42,6 +43,14 @@ export const getLevelById = async (id: string) => {
 
     return "Id needed";
 };
+
+export const insertOrUpdateSubmission = async (submission: Submission) => {
+    const query = { _id: new ObjectId(submission._id) };
+    const update = { $set: { user: submission.user, level: submission.level, bytecode: submission.bytecode } };
+    const options = { upsert: true };
+    let success = await database.collection<Submission>("Submission").updateOne(query, update, options);
+    return success;
+}
 
 const closeConnection = (_: any) => { //Needs _ argument, otherwise it would be called after the server started for some reason...
     client.close(); // Close MongodDB Connection when Process ends
