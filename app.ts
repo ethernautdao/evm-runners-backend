@@ -1,21 +1,13 @@
 import "dotenv/config";
 import express, { Express, Request, Response } from "express";
-import { getLeaderboard, getLevelById, getLevels } from "./db";
+import leaderboardRouter from "./routes/leaderboard";
+import levelsRouter from "./routes/levels";
 
 const app: Express = express();
 const port = process.env.PORT;
 
-app.get("/levels", async (req: Request, res: Response) => {
-  res.send(await getLevels());
-});
-
-app.get("/levels/:id?", async (req: Request, res: Response) => {
-  res.send(await getLevelById(req.params.id));
-});
-
-app.get("/leaderboard", async (req: Request, res: Response) => {
-  res.send(await getLeaderboard());
-});
+app.use("/leaderboard", leaderboardRouter);
+app.use("/levels", levelsRouter);
 
 app.listen(port, () => {
   console.log(`The server is running at http://localhost:${port}`);
