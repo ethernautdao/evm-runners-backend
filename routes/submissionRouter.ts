@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getSubmissionById, getSubmissions, insertOrUpdateSubmission } from '../db';
+import { getSubmissionById, getSubmissions, insertOrUpdateSubmission } from '../controller/submissionController';
 import { getSubmissionByIdMiddleware, postSubmissionMiddleware } from '../middleware/submissionMiddleware';
 import { Submission } from '../model/submission';
 

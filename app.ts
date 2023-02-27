@@ -8,6 +8,7 @@ const app: Express = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+
 app.use("/leaderboard", leaderboardRouter);
 app.use("/levels", levelsRouter);
 app.use("/submissions", submissionRouter);

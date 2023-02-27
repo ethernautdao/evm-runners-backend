@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { getLevelById, getLevels } from '../db';
+import { getLevelById, getLevels } from '../controller/levelController';
 import { getLevelByIdMiddleware } from '../middleware/levelsMiddleware';
 
 const levelsRouter = express.Router();
