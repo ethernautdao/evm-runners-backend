@@ -32,32 +32,37 @@ export const getLevels = async () => {
 };
 
 export const getLevelById = async (id: string) => {
-    if (id !== "") {
-        try {
-            const level = await database.collection<Level>("Levels").findOne({ _id: new ObjectId(id) });
-            return level;
-        } catch (_) {
-            return `No results for id ${id}`;
-        }
-    }
-
-    return "Id needed";
+    try {
+        const level = await database.collection<Level>("Levels").findOne({ _id: new ObjectId(id) });
+        return level;
+    } catch (_) {
+        return `No results for id ${id}`;
+    };
 };
 
 export const getSubmissions = async () => {
     try {
-        const submissions = await database.collection<Submission>("Submission").find().toArray();
+        const submissions = await database.collection<Submission>("Submissions").find().toArray();
         return submissions;
     } catch (_) {
         return "No results";
     }
 };
 
+export const getSubmissionById = async (id: string) => {
+    try {
+        const submission = await database.collection<Submission>("Submissions").findOne({ _id: new ObjectId(id) });
+        return submission;
+    } catch (_) {
+        return `No results for id ${id}`;
+    };
+};
+
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     const query = { _id: new ObjectId(submission._id) };
     const update = { $set: { user: submission.user, level: submission.level, bytecode: submission.bytecode } };
     const options = { upsert: true };
-    let success = await database.collection<Submission>("Submission").updateOne(query, update, options);
+    let success = await database.collection<Submission>("Submissions").updateOne(query, update, options);
     return success;
 }
 
