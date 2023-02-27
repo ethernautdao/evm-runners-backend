@@ -44,6 +44,15 @@ export const getLevelById = async (id: string) => {
     return "Id needed";
 };
 
+export const getSubmissions = async () => {
+    try {
+        const submissions = await database.collection<Submission>("Submission").find().toArray();
+        return submissions;
+    } catch (_) {
+        return "No results";
+    }
+};
+
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     const query = { _id: new ObjectId(submission._id) };
     const update = { $set: { user: submission.user, level: submission.level, bytecode: submission.bytecode } };

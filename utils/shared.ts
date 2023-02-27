@@ -2,8 +2,8 @@ import { ObjectId } from "mongodb";
 
 export const isValidId = (id: any) => {
     try {
-        return new ObjectId(id);
+        return ObjectId.isValid(id);
     } catch {
-        return undefined;
+        return false;
     }
 };
