@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { Submission } from "../model/submission";
 import { isValidId } from "../utils/shared";
 
 export const getSubmissionByIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -10,16 +9,8 @@ export const getSubmissionByIdMiddleware = (req: Request, res: Response, next: N
     next();
 };
 
-export const postSubmissionMiddleware = (req: Request<Submission>, res: Response, next: NextFunction) => {
-    const { _id, user, level } = req.body;
-
-    //Consider empty string as undefined ids so a new submission is created
-    let submissionId = _id === "" ? undefined : _id;
-    req.body._id = submissionId;
-
-    if (submissionId && !isValidId(submissionId)) {
-        return res.status(400).json({ error: "Invalid _id parameter: Must be a valid submission id." });
-    }
+export const postSubmissionMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    const {user, level } = req.body;
 
     if (!user || !isValidId(user)) {
         return res.status(400).json({ error: "Invalid user parameter: Must be a valid user id." });
