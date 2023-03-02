@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { Express } from "express";
 import leaderboardRouter from "./routes/leaderboardRouter";
-import levelsRouter from "./routes/levelsRouter";
+import levelsRouter from "./routes/levelRouter";
 import submissionRouter from "./routes/submissionRouter";
 
 const app: Express = express();

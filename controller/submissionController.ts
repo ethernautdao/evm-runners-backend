@@ -7,16 +7,21 @@ export const getSubmissions = async () => {
         const submissions = await database.collection<Submission>("Submissions").find().toArray();
         return submissions;
     } catch (_) {
-        return "No results";
+        return "An error occured getting submissions.";
     }
 };
 
 export const getSubmissionById = async (id: string) => {
     try {
         const submission = await database.collection<Submission>("Submissions").findOne({ _id: new ObjectId(id) });
-        return submission;
-    } catch (_) {
+
+        if (submission) {
+            return submission;
+        }
         return `No results for id ${id}`;
+
+    } catch (_) {
+        return `An error occurred getting submission by id`;
     };
 };
 

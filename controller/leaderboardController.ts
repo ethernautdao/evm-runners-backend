@@ -6,6 +6,6 @@ export const getLeaderboard = async () => {
         const leaderboard = await database.collection<Leaderboard>("Leaderboard").find().toArray();
         return leaderboard;
     } catch (_) {
-        return "No results";
+        return "An error occurred getting the leaderboard.";
     }
 };
