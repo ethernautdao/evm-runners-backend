@@ -1,50 +1,40 @@
-import { ObjectId } from "mongodb";
 import { database } from "../db";
 import { Level } from "../model/level";
+import { SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY } from "../utils/queries";
 
 export const getLevels = async () => {
     try {
-        const levels = await database.collection<Level>("Levels")
-            .aggregate([
-                {
-                    $project: {
-                        _id: 1,
-                        name: 1,
-                        position: 1
-                    }
-                }
-            ])
-            .toArray();
-
-        return levels;
+        const levels = await database.query<Level>(SELECT_ALL_LEVELS_QUERY);
+        return levels.rows;
     } catch (_) {
         return "An error occurred getting levels";
     }
 };
 
-export const getLevelById = async (id: string) => {
+export const getLevelById = async (id: number) => {
     try {
-        const level = await database.collection<Level>("Levels")
-            .aggregate([
-                { $match: { _id: new ObjectId(id) } },
-                {
-                    $project: {
-                        _id: 1,
-                        name: 1,
-                        position: 1
-                    }
-                }
-            ])
-            .toArray()
-            .then(data => data[0]);
+        const level = await database.query<Level>(`${SELECT_LEVEL_BY_ID_QUERY}${id}`);
 
-        if (level) {
-            return level;
+        if (level.rowCount > 0) {
+            return level.rows[0];
         }
 
         return `No results for id ${id}`;
-
     } catch (_) {
         return `An error occurred getting level by id.`;
     };
 };
+
+export const getTestContractByLevelId = async (id: number) => {
+    try {
+        const level = await database.query<Level>(`${SELECT_LEVEL_BY_ID_QUERY}${id}`);
+
+        if (level.rowCount > 0) {
+            return level.rows[0].test_contract;
+        }
+
+        return undefined;
+    } catch (_) {
+        return undefined
+    };
+}

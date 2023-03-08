@@ -1,8 +1,6 @@
-import { ObjectId } from "mongodb";
-
 export interface Submission {
-    _id: ObjectId;
-    user: ObjectId;
-    level: ObjectId;
+    id: number;
+    level_id: number;
+    user_id: number;
     bytecode: string;
 };

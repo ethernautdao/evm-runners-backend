@@ -9,7 +9,7 @@ submissionRouter.get("/", async (req: Request, res: Response) => {
 });
 
 submissionRouter.get("/:id?", getSubmissionByIdMiddleware, async (req: Request, res: Response) => {
-    res.send(await getSubmissionById(req.params.id));
+    res.send(await getSubmissionById(Number.parseInt(req.params.id)));
 });
 
 submissionRouter.post("/", postSubmissionMiddleware, async (req: Request, res: Response) => {

@@ -9,7 +9,7 @@ levelsRouter.get("/", async (req: Request, res: Response) => {
 });
 
 levelsRouter.get("/:id?", getLevelByIdMiddleware, async (req: Request, res: Response) => {
-    res.send(await getLevelById(req.params.id));
+    res.send(await getLevelById(Number.parseInt(req.params.id)));
 });
 
 export default levelsRouter;

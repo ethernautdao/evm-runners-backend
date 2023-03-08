@@ -1,22 +1,32 @@
-import { Db, MongoClient } from "mongodb";
+import { Pool } from "pg";
 
-let client: MongoClient;
-let database: Db;
+let database: Pool;
+const connectDb = async () => {
+    try {
+        database = new Pool({
+            user: process.env.PGUSER,
+            host: process.env.PGHOST,
+            database: process.env.PGDATABASE,
+            password: process.env.PGPASSWORD,
+            port: Number.parseInt(process.env.PGPORT as string) ?? 5432,
+        });
 
-try {
-    client = new MongoClient(process.env.CONNECTION_STRING ?? "");
-    database = client.db(process.env.DATABASE_NAME);
-} catch (error) {
-    console.log(`Couldn't establish connection to database: ${error}`);
+        await database.connect();
+
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-const closeConnection = (_: any) => { //Needs _ argument, otherwise it would be called after the server started for some reason...
-    client.close(); // Close MongodDB Connection when Process ends
+const closeConnection = async (_: any) => { //Needs _ argument, otherwise it would be called after server start for some reason...
+    if (database) {
+        await database.end();
+    }
     process.exit(); // Exit with default success-code '0'.
 };
 
-
-process.on('SIGINT', closeConnection);
+connectDb();
 process.on('SIGTERM', closeConnection);
+process.on('SIGINT', closeConnection);
 
 export { database };

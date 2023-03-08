@@ -1,25 +1,25 @@
-import { ObjectId } from "mongodb";
 import { database } from "../db";
 import { Submission } from "../model/submission";
+import { SELECT_ALL_SUBMISSIONS_QUERY, SELECT_SUBMISSION_BY_ID_QUERY } from "../utils/queries";
 
 export const getSubmissions = async () => {
     try {
-        const submissions = await database.collection<Submission>("Submissions").find().toArray();
-        return submissions;
+        const submissions = await database.query<Submission>(SELECT_ALL_SUBMISSIONS_QUERY);
+        return submissions.rows;
     } catch (_) {
         return "An error occured getting submissions.";
     }
 };
 
-export const getSubmissionById = async (id: string) => {
+export const getSubmissionById = async (id: number) => {
     try {
-        const submission = await database.collection<Submission>("Submissions").findOne({ _id: new ObjectId(id) });
+        const submission = await database.query<Submission>(`${SELECT_SUBMISSION_BY_ID_QUERY}${id}`);
 
-        if (submission) {
-            return submission;
+        if (submission.rowCount > 0) {
+            return submission.rows[0];
         }
-        return `No results for id ${id}`;
 
+        return `No results for id ${id}`;
     } catch (_) {
         return `An error occurred getting submission by id`;
     };
@@ -28,16 +28,18 @@ export const getSubmissionById = async (id: string) => {
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
         //If the user has a submission for the same level, update it. Otherwise, create a new one.
-        const query = {
-            level: new ObjectId(submission.level),
-            user: new ObjectId(submission.user)
-        };
-        const update = { $set: { user: new ObjectId(submission.user), level: new ObjectId(submission.level), bytecode: submission.bytecode } };
-        const options = { upsert: true };
-        let success = await database.collection<Submission>("Submissions").updateOne(query, update, options);
-        return success;
+        const success = await database.query<Submission>(`
+            INSERT INTO submissions (level_id, user_id, bytecode)
+            VALUES(${submission.level_id}, ${submission.user_id}, ${submission.bytecode}) 
+            ON CONFLICT (user_id, level_id) 
+            DO UPDATE SET bytecode = ${submission.bytecode};
+        `
+        );
+
+        return success
     } catch (err: any) {
-        return err.code = 11000 ? "You're trying to update a submission but with the wrong level or user id." : "Unexpected error occured, please try again.";
+        console.log(err)
+        return err.detail ? err.detail : "Unexpected error occured, please try again.";
     }
 
 };
