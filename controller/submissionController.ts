@@ -27,16 +27,14 @@ export const getSubmissionById = async (id: number) => {
 
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
-        //If the user has a submission for the same level, update it. Otherwise, create a new one.
-        const success = await database.query<Submission>(`
-            INSERT INTO submissions (level_id, user_id, bytecode)
-            VALUES(${submission.level_id}, ${submission.user_id}, ${submission.bytecode}) 
+        await database.query<Submission>(
+            `INSERT INTO submissions (level_id, user_id, bytecode)
+            VALUES(${submission.level_id}, ${submission.user_id}, '${submission.bytecode}') 
             ON CONFLICT (user_id, level_id) 
-            DO UPDATE SET bytecode = ${submission.bytecode};
-        `
+            DO UPDATE SET bytecode = EXCLUDED.bytecode;`
         );
 
-        return success
+        return "Submission added successfully.";
     } catch (err: any) {
         console.log(err)
         return err.detail ? err.detail : "Unexpected error occured, please try again.";
