@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { Level } from "../model/level";
-import { SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY } from "../utils/queries";
+import { SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY, SELECT_TEST_FILE_BY_ID_QUERY } from "../utils/queries";
 
 export const getLevels = async () => {
     try {
@@ -27,7 +27,7 @@ export const getLevelById = async (id: number) => {
 
 export const getTestContractByLevelId = async (id: number) => {
     try {
-        const level = await database.query<Level>(`${SELECT_LEVEL_BY_ID_QUERY}${id}`);
+        const level = await database.query<Level>(`${SELECT_TEST_FILE_BY_ID_QUERY}${id}`);
 
         if (level.rowCount > 0) {
             return level.rows[0].test_contract;
