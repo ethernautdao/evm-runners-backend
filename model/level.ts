@@ -3,4 +3,4 @@ export interface Level {
     name: string;
     position: number;
     test_contract: string;
-}
+};
