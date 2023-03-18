@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { NextFunction, Request, Response } from "express";
 import { promisify } from "util";
 import { getTestContractByLevelId } from "../controller/levelController";
+import { convertToSolutionFeedback, SolutionFeedback, TestResult } from "../model/solution";
 import { BYTECODE_REGEX, FORGE_TEST_COMMAND } from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
 
@@ -59,22 +60,39 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
         return { result: undefined, isError: true, error: "No valid test file for that level." };
     }
 
-    var result = await promisifiedExec(`${FORGE_TEST_COMMAND} ${test_file}`, { cwd: `${process.env.TESTS_FOLDER_PATH}` , env: { ...process.env, 'BYTECODE': `${bytecode}`}});
+    let output: any;
+
 
     try {
-        let formattedStdout = "{\"test/" + result.stdout.split("{\"test/").splice(1);
-        let formattedResult = JSON.parse(formattedStdout);
-        return { result: formattedResult, isError: false, error: undefined };
-    } catch (_) {
-        let errorMessage = formatError(result.stdout);
+        output = await promisifiedExec(`${FORGE_TEST_COMMAND} ${test_file}`, { cwd: `${process.env.TESTS_FOLDER_PATH}`, env: { ...process.env, 'BYTECODE': `${bytecode}` } });
+        return { result: convertToSolutionFeedback(output), isError: false, error: undefined };
+    } catch (err: any) {
+        /**
+         * If forge test is run, but tests fail, exec returns an undefined result
+         * and puts the failed tests in the err variable. But if the forge test runs but,
+         * for instance, the test file doesn't exist, it returns the error in result.stdout.
+         * Meaning that to analyze failed tests, we need err.stdout, or for some generic errors
+         * we need result.stdout...
+         */
+
+        let errorMessage = output ? formatError(output.stdout) : convertToSolutionFeedback(err);
         return { result: undefined, isError: true, error: errorMessage };
     }
 };
 
-const formatError = (stdout: string) => {
-    if (stdout.includes("No tests match the provided pattern")) {
+const evaluateSolution = (testResults: SolutionFeedback) => {
+    //TO DO
+    return testResults;
+};
+
+const formatError = (error: string) => {
+    if (!error) {
+        return "Invalid solution. Tests failed";
+    }
+
+    if (error.includes("No tests match the provided pattern")) {
         return "Level test file is invalid. Reach out to the developers.";
     }
 
-    return "Unexpected error when testing the solution: " + stdout;
+    return "Unexpected error when testing the solution: " + error;
 };
