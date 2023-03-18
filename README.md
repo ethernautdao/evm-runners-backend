@@ -80,6 +80,28 @@ Where `evm_runners` is the user you're using in your server.
      curl http://localhost:1337/levels/1
      ```
 
+- <b>Submission</b>
+    - GET
+
+     ```
+     curl http://localhost:1337/submissions
+     ```
+
+    - GET BY ID
+
+     ```
+     curl http://localhost:1337/submissions/1
+     ```
+
+    - POST OR PUT
+
+     ```
+     curl -X POST http://localhost:1337/submissions \
+     -H "Content-Type: application/json" \
+     -d '{ "bytecode": "0x608060...", "user_id": "1", "level_id": "3" }' 
+     ```
+     User with ID 1 is submitting a solution for level 3. This solution will be tested. If it passes the tests it is saved. If the user already has a solution for this level, it is updated.
+     
 ### Run this application
 
 1. Create `env` and then fill the needed variables
