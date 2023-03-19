@@ -15,7 +15,7 @@ Then, you can import the schema in the file `evm_runners_database_schema.sql`.
 As an example, in Ubuntu this can be done by running:
 
 ```
-psql -h localhost -U evm_runners -f evm_runners_postgres_shema.sql
+psql -h localhost -U evm_runners -f evm_runners_postgres_schema.sql
 ```
 Where `evm_runners` is the user you're using in your server.
 
