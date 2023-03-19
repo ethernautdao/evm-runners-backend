@@ -2,15 +2,6 @@ import { database } from "../db";
 import { User } from "../model/user";
 import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY } from "../utils/queries";
 
-export const getLeaderboard = async () => {
-    /*try {
-        const leaderboard = await database.collection<Leaderboard>("Leaderboard").find().toArray();
-        return leaderboard;
-    } catch (_) {*/
-    return "An error occurred getting the leaderboard.";
-    // }
-};
-
 export const getUsers = async () => {
     try {
         const users = await database.query<User>(SELECT_ALL_USERS_QUERY);

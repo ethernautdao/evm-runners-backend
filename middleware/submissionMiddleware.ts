@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { promisify } from "util";
 import { getTestContractByLevelId } from "../controller/levelController";
 import { convertToSolutionFeedback, SolutionFeedback, TestResult } from "../model/solution";
+import { Submission } from "../model/submission";
 import { BYTECODE_REGEX, FORGE_TEST_COMMAND } from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
 
@@ -24,13 +25,15 @@ export const postSubmissionMiddleware = async (req: Request, res: Response, next
         return res.status(400).json({ error: submissionError });
     }
 
-    const { result, isError, error } = await isValidSolution(bytecode, level_id);
+    const { result, solutionError } = await isValidSolution(bytecode, level_id);
 
-    if (isError) {
-        return res.status(400).json(error);
+    if (!result) {
+        return res.status(400).json(solutionError);
     }
 
-    return res.status(400).json(result);
+    req.submission = evaluateSolution(result, user_id, level_id, bytecode);
+
+    next();
 };
 
 const isValidSubmission = (user_id: any, level_id: any, bytecode: any) => {
@@ -57,7 +60,7 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
     const test_file = await getTestContractByLevelId(level_id);
 
     if (!test_file) {
-        return { result: undefined, isError: true, error: "No valid test file for that level." };
+        return { result: undefined, solutionError: "No valid test file for that level." };
     }
 
     let output: any;
@@ -65,7 +68,7 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
 
     try {
         output = await promisifiedExec(`${FORGE_TEST_COMMAND} ${test_file}`, { cwd: `${process.env.TESTS_FOLDER_PATH}`, env: { ...process.env, 'BYTECODE': `${bytecode}` } });
-        return { result: convertToSolutionFeedback(output), isError: false, error: undefined };
+        return { result: convertToSolutionFeedback(output), solutionError: undefined };
     } catch (err: any) {
         /**
          * If forge test is run, but tests fail, exec returns an undefined result
@@ -76,13 +79,26 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
          */
 
         let errorMessage = output ? formatError(output.stdout) : convertToSolutionFeedback(err);
-        return { result: undefined, isError: true, error: errorMessage };
+        return { result: undefined, solutionError: errorMessage };
     }
 };
 
-const evaluateSolution = (testResults: SolutionFeedback) => {
-    //TO DO
-    return testResults;
+const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, bytecode: any) => {
+    let submission: Submission = {
+        id: undefined,
+        user_id: user,
+        level_id: level,
+        bytecode: bytecode,
+        gas: 0,
+        size: 0
+    };
+
+    if(testResults.fuzz.success && testResults.sanity.success && testResults.gas.success && testResults.size.success) {
+        submission.gas = testResults.gas.decoded_logs[0];
+        submission.size = testResults.size.decoded_logs[0];
+    }
+
+    return submission;
 };
 
 const formatError = (error: string) => {
