@@ -93,6 +93,18 @@ Where `evm_runners` is the user you're using in your server.
      curl http://localhost:1337/submissions/1
      ```
 
+    - GET GAS LEADERBOARD BY LEVEL ID
+
+     ```
+     curl http://localhost:1337/submissions/leaderboard/gas/1
+     ```
+
+    - GET SIZE LEADERBOARD BY LEVEL ID
+
+     ```
+     curl http://localhost:1337/submissions/leaderboard/size/1
+     ```
+
     - POST OR PUT
 
      ```
