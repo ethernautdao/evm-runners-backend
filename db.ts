@@ -26,7 +26,7 @@ const closeConnection = async (_: any) => { //Needs _ argument, otherwise it wou
 };
 
 connectDb();
-process.on('SIGTERM', closeConnection);
-process.on('SIGINT', closeConnection);
+process.once('SIGTERM', closeConnection);
+process.once('SIGINT', closeConnection);
 
 export { database };
