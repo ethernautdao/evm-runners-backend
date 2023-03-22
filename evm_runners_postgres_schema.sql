@@ -251,7 +251,7 @@ ALTER TABLE ONLY evm_runners.users
 --
 
 ALTER TABLE ONLY evm_runners.submissions
-    ADD CONSTRAINT level_fk FOREIGN KEY (level_id) REFERENCES evm_runners.levels(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT level_fk FOREIGN KEY (level_id) REFERENCES evm_runners.levels(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -260,7 +260,7 @@ ALTER TABLE ONLY evm_runners.submissions
 --
 
 ALTER TABLE ONLY evm_runners.submissions
-    ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES evm_runners.users(id) ON UPDATE CASCADE;
+    ADD CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES evm_runners.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 -- Completed on 2023-03-19 15:06:03 WET
