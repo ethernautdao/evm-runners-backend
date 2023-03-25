@@ -61,10 +61,7 @@ export const convertToSolutionFeedback = (output: any) => {
                 solutionFeedback.gas = {
                     success: v.success,
                     reason: v.reason,
-                    decoded_logs: [
-                        Number((v.kind.Fuzz.map((s: any) => s.gas - s.stipend).reduce((accumulator: number, a: number) => {
-                            return accumulator + a;
-                        }, 0) / 1024).toFixed(2))],
+                    decoded_logs: [Number(v.kind.Fuzz.mean_gas).toFixed(2)],
                 }
                 return;
             }
