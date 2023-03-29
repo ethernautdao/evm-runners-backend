@@ -1,7 +1,7 @@
 # evm-runners-backend
 
 This is the branch for fly.io deployment.
-Note that this requires a foundry project like `evm-runners-levels` to run the tests in the deployment environment.
+Note that this requires a local foundry project like `evm-runners-levels` to run the tests in the deployment environment.
 
 ## Deployment 
 
