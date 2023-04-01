@@ -55,16 +55,20 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
 
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
-        await database.query<Submission>(
+        const inserted = await database.query<Submission>(
             `INSERT INTO submissions (level_id, user_id, bytecode, gas, size)
             VALUES(${submission.level_id}, ${submission.user_id}, '${submission.bytecode}', ${submission.gas} , ${submission.size}) 
             ON CONFLICT (user_id, level_id) 
-            DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size;`
+            DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size
+            RETURNING *;`
         );
 
-        return "Submission added successfully.";
+        if (inserted.rowCount > 0) {
+            return inserted.rows[0];
+        }
+
+        return `Unable to create or update submission.`;
     } catch (err: any) {
         return err.detail ? err.detail : "Unexpected error occured, please try again.";
     }
-
 };

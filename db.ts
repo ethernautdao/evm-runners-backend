@@ -9,10 +9,10 @@ const connectDb = async () => {
             database: process.env.PGDATABASE,
             password: process.env.PGPASSWORD,
             port: Number.parseInt(process.env.PGPORT as string) ?? 5432,
+            keepAlive: true
         });
 
-        await database.connect();
-
+        database.on('error', (err) => console.log("### NODE-PG ERROR ###\n", err));
     } catch (error) {
         console.log(error);
     }
@@ -24,6 +24,7 @@ const closeConnection = async (_: any) => { //Needs _ argument, otherwise it wou
     }
     process.exit(); // Exit with default success-code '0'.
 };
+
 
 connectDb();
 process.once('SIGTERM', closeConnection);
