@@ -28,28 +28,25 @@ export const getUserById = async (id: number) => {
 export const insertOrUpdateUser = async (user: User) => {
     try {
         let inserted;
-        let message;
 
         if (user.id && typeof user.id === 'number') {
             inserted = await database.query<User>(
                 `INSERT INTO users (id, name)
                 VALUES(${user.id}, '${user.name}') 
                 ON CONFLICT (id)
-                DO UPDATE SET name = EXCLUDED.name;`
+                DO UPDATE SET name = EXCLUDED.name
+                RETURNING *;`
             );
-
-            message = "User updated successfully";
         } else {
             inserted = await database.query<User>(
                 `INSERT INTO users (name)
-                VALUES('${user.name}');`
+                VALUES('${user.name}')
+                RETURNING *;`
             );
-
-            message = "User created successfully";
         }
 
         if (inserted.rowCount > 0) {
-            return message;
+            return inserted.rows[0];
         }
 
         return `Unable to create or update user.`;

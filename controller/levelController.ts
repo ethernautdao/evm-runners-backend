@@ -42,29 +42,26 @@ export const getTestContractByLevelId = async (id: number) => {
 export const insertOrUpdateLevel = async (level: Level) => {
     try {
         let inserted;
-        let message;
 
         if (level.id && typeof level.id === 'number') {
             inserted = await database.query<Level>(
                 `INSERT INTO levels (id, name, position, test_contract)
                 VALUES(${level.id}, '${level.name}', ${level.position}, '${level.test_contract}') 
                 ON CONFLICT (id)
-                DO UPDATE SET name = EXCLUDED.name, position = EXCLUDED.position, test_contract = EXCLUDED.test_contract;`
+                DO UPDATE SET name = EXCLUDED.name, position = EXCLUDED.position, test_contract = EXCLUDED.test_contract
+                RETURNING *;`
             );
-
-            message = "Level updated successfully.";
 
         } else {
             inserted = await database.query<Level>(
                 `INSERT INTO levels (name, position, test_contract)
-                VALUES('${level.name}', ${level.position}, '${level.test_contract}');`
+                VALUES('${level.name}', ${level.position}, '${level.test_contract}')
+                RETURNING *;`
             );
-
-            message = "Level created successfully.";
         }
 
         if (inserted.rowCount > 0) {
-            return message;
+            return inserted.rows[0];
         }
 
         return "Unable to create or update level.";
