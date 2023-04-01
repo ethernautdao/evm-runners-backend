@@ -62,7 +62,7 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
             DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size
             RETURNING *;`
         );
-        console.log(inserted)
+
         if (inserted.rowCount > 0) {
             return inserted.rows[0];
         }
