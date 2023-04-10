@@ -27,7 +27,16 @@ export const getSubmissionById = async (id: number) => {
 
 export const getGasLeaderboardByLevel = async (id: number) => {
     try {
-        const leaderboard = await database.query<Submission>(`SELECT * FROM submissions WHERE level_id = ${id} AND gas != 0 ORDER BY gas ASC;`);
+        const leaderboard = await database.query<Submission>(
+            `
+            SELECT s.*, u.name AS user_name, l.name AS level_name
+            FROM submissions s 
+            JOIN users u ON s.user_id = u.id 
+            JOIN levels l ON s.level_id = l.id 
+            WHERE s.level_id = ${id} AND s.gas != 0 
+            ORDER BY s.gas ASC;
+            `
+        );
 
         if (leaderboard.rowCount > 0) {
             return leaderboard.rows;
@@ -41,7 +50,16 @@ export const getGasLeaderboardByLevel = async (id: number) => {
 
 export const getSizeLeaderboardByLevel = async (id: number) => {
     try {
-        const leaderboard = await database.query<Submission>(`SELECT * FROM submissions WHERE level_id = ${id} AND size != 0 ORDER BY size ASC;`);
+        const leaderboard = await database.query<Submission>(
+            `
+            SELECT s.*, u.name AS user_name, l.name AS level_name
+            FROM submissions s 
+            JOIN users u ON s.user_id = u.id 
+            JOIN levels l ON s.level_id = l.id 
+            WHERE s.level_id = ${id} AND s.size != 0 
+            ORDER BY s.gas ASC;
+            `
+        );
 
         if (leaderboard.rowCount > 0) {
             return leaderboard.rows;

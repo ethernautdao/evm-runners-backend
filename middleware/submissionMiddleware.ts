@@ -87,7 +87,9 @@ const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, 
     let submission: Submission = {
         id: undefined,
         user_id: user,
+        user_name: undefined,
         level_id: level,
+        level_name: undefined,
         bytecode: bytecode,
         gas: 0,
         size: 0
