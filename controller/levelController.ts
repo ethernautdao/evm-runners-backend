@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { Level } from "../model/level";
-import { DELETE_LEVEL_QUERY, SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY, SELECT_TEST_FILE_BY_ID_QUERY } from "../utils/queries";
+import { DELETE_LEVEL_QUERY, SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY, SELECT_LEVEL_TOTAL_SOLUTIONS, SELECT_TEST_FILE_BY_ID_QUERY } from "../utils/queries";
 
 export const getLevels = async () => {
     try {
@@ -38,6 +38,20 @@ export const getTestContractByLevelId = async (id: number) => {
         return undefined
     };
 }
+
+export const getLevelTotalSolutions = async (id: number) => {
+    try {
+        const solutions = await database.query(`${SELECT_LEVEL_TOTAL_SOLUTIONS}${id}`);
+
+        if (solutions.rowCount > 0 && solutions.rows[0].count > 0) {
+            return solutions.rows[0].count;
+        }
+
+        return `No solutions for level ${id}`;
+    } catch (_) {
+        return `An error occurred getting the total number of solution for this level.`;
+    };
+};
 
 export const insertOrUpdateLevel = async (level: Level) => {
     try {
