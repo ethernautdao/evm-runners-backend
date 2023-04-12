@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { deleteLevel, getLevelById, getLevels, insertOrUpdateLevel } from '../controller/levelController';
+import { deleteLevel, getLevelById, getLevelTotalSolutions, getLevels, insertOrUpdateLevel } from '../controller/levelController';
 import { checkLevelIdMiddleware, postLevelMiddleware } from '../middleware/levelMiddleware';
 
 const levelsRouter = express.Router();
@@ -10,6 +10,10 @@ levelsRouter.get("/", async (req: Request, res: Response) => {
 
 levelsRouter.get("/:id?", checkLevelIdMiddleware, async (req: Request, res: Response) => {
     res.send(await getLevelById(Number.parseInt(req.params.id)));
+});
+
+levelsRouter.get("/:id?/total", checkLevelIdMiddleware, async (req: Request, res: Response) => {
+    res.send(await getLevelTotalSolutions(Number.parseInt(req.params.id)));
 });
 
 levelsRouter.post("/", postLevelMiddleware, async (req: Request, res: Response) => {

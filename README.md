@@ -63,6 +63,13 @@ Where `evm_runners` is the user you're using in your server.
      curl http://localhost:1337/levels/1
      ```
 
+
+    - GET TOTAL SOLUTIONS
+
+     ```
+     curl http://localhost:1337/levels/1/total
+     ```
+
     - POST OR PUT
 
      ```

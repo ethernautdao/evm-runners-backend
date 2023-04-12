@@ -7,6 +7,7 @@ export const DELETE_USER_QUERY = "DELETE FROM users WHERE id = ";
 export const SELECT_ALL_LEVELS_QUERY = "SELECT id, name, position FROM levels";
 export const SELECT_LEVEL_BY_ID_QUERY = "SELECT id, name, position FROM levels WHERE id = ";
 export const SELECT_TEST_FILE_BY_ID_QUERY = "SELECT test_contract FROM levels WHERE id = ";
+export const SELECT_LEVEL_TOTAL_SOLUTIONS = "SELECT COUNT(id) FROM submissions WHERE level_id = ";
 export const DELETE_LEVEL_QUERY = "DELETE FROM levels WHERE id = ";
 
 /* SUBMISSION */
