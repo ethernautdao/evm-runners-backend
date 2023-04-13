@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { DISCORD_GET_TOKEN, DISCORD_REDIRECT, REDIRECT_CALLBACK } from '../utils/constants';
+import { DISCORD_GET_USER_INFO, DISCORD_GET_USER_TOKEN, DISCORD_REDIRECT, REDIRECT_CALLBACK } from '../utils/constants';
 const fetch = require("node-fetch");
 
 const authRouter = express.Router();
@@ -18,8 +18,26 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
         'code': `${code}`
     });
 
-    fetch(DISCORD_GET_TOKEN, { method: "POST", body: body }).then((response: any) => response.json()).then((data: any) => {
-        res.send('AUTHORIZED: ' + JSON.stringify(data));
+    fetch(DISCORD_GET_USER_TOKEN, { method: "POST", body: body }).then((response: any) => response.json()).then((data: any) => {
+        fetch(DISCORD_GET_USER_INFO, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${data.access_token}`,
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response: any) => {
+                if (!response.ok) {
+                    return res.status(500).json({ error: "Get user info response was not ok" });
+                }
+                return response.json();
+            })
+            .then((data: any) => {
+                res.status(200).send(data);
+            })
+            .catch((error: any) => {
+                return res.status(500).json({ error: error });
+            });
     });
 });
 
