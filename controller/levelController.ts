@@ -42,12 +42,7 @@ export const getTestContractByLevelId = async (id: number) => {
 export const getLevelTotalSolutions = async (id: number) => {
     try {
         const solutions = await database.query(`${SELECT_LEVEL_TOTAL_SOLUTIONS}${id}`);
-
-        if (solutions.rowCount > 0 && solutions.rows[0].count > 0) {
-            return solutions.rows[0].count;
-        }
-
-        return `No solutions for level ${id}`;
+        return solutions.rows[0].count;
     } catch (_) {
         return `An error occurred getting the total number of solution for this level.`;
     };
