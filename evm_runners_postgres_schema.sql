@@ -119,7 +119,13 @@ ALTER SEQUENCE evm_runners.submissions_id_seq OWNED BY evm_runners.submissions.i
 
 CREATE TABLE evm_runners.users (
     id bigint NOT NULL,
-    name character varying(100) NOT NULL
+    name character varying(100) NOT NULL,
+	discriminator int NOT NULL,
+    code text NOT NULL,
+    access_token text NOT NULL,
+    refresh_token text NOT NULL,
+    expires_in timestamp NOT NULL,
+    admin boolean DEFAULT false NOT NULL
 );
 
 
@@ -268,4 +274,3 @@ ALTER TABLE ONLY evm_runners.submissions
 --
 -- PostgreSQL database dump complete
 --
-
