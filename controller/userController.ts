@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { User } from "../model/user";
-import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY } from "../utils/queries";
+import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_CODE_QUERY, SELECT_USER_BY_ID_QUERY } from "../utils/queries";
 
 export const getUsers = async () => {
     try {
@@ -25,25 +25,38 @@ export const getUserById = async (id: number) => {
     };
 };
 
+export const getUserToken = async (code: string) => {
+    try {
+        const user = await database.query<User>(`${SELECT_USER_BY_CODE_QUERY}'${code}'`);
+
+        if (user.rowCount > 0) {
+            return user.rows[0];
+        }
+
+        return `No token for that code.`;
+    } catch (_) {
+        return `An error occurred getting the user token.`;
+    };
+}
+
 export const insertOrUpdateUser = async (user: User) => {
     try {
-        let inserted;
-
-        if (user.id && typeof user.id === 'number') {
-            inserted = await database.query<User>(
-                `INSERT INTO users (id, name)
-                VALUES(${user.id}, '${user.name}') 
-                ON CONFLICT (id)
-                DO UPDATE SET name = EXCLUDED.name
-                RETURNING *;`
-            );
-        } else {
-            inserted = await database.query<User>(
-                `INSERT INTO users (name)
-                VALUES('${user.name}')
-                RETURNING *;`
-            );
-        }
+        const inserted = await database.query<User>(
+            `
+            INSERT INTO users (discord_id, name, discriminator, code, access_token, refresh_token, expires_in, admin)
+            VALUES(${user.discord_id}, '${user.name}', ${user.discriminator}, '${user.code}', '${user.access_token}', '${user.refresh_token}', to_timestamp(${user.expires_in / 1000}), ${user.admin}) 
+            ON CONFLICT (discord_id)
+            DO UPDATE SET 
+                name = EXCLUDED.name, 
+                discriminator = EXCLUDED.discriminator, 
+                code = EXCLUDED.code, 
+                access_token = EXCLUDED.access_token, 
+                refresh_token = EXCLUDED.refresh_token, 
+                expires_in = EXLCUDED.expires_in, 
+                admin = EXCLUDED.admin
+            RETURNING *;
+            `
+        );
 
         if (inserted.rowCount > 0) {
             return inserted.rows[0];
