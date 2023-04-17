@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { User } from "../model/user";
-import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY, SELECT_USER_BY_PIN_QUERY } from "../utils/queries";
+import { SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY, SELECT_USER_BY_PIN_QUERY, SELECT_USER_BY_TOKEN_QUERY } from "../utils/queries";
 
 export const getUsers = async () => {
     try {
@@ -39,6 +39,34 @@ export const getUserByPin = async (pin: string) => {
     };
 }
 
+export const doesTokenExist = async (token: string) => {
+    try {
+        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+
+        if (user.rowCount > 0) {
+            return true;
+        }
+
+        return false;
+    } catch (_) {
+        return false;
+    };
+}
+
+export const userIsAdmin = async (token: string) => {
+    try {
+        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+
+        if (user.rowCount > 0) {
+            return user.rows[0].admin;
+        }
+
+        return false;
+    } catch (_) {
+        return false;
+    };
+}
+
 export const insertOrUpdateUser = async (user: User) => {
     try {
         const inserted = await database.query<User>(
@@ -70,7 +98,7 @@ export const insertOrUpdateUser = async (user: User) => {
     }
 };
 
-export const deleteUser = async (id: number) => {
+/*export const deleteUser = async (id: number) => {
     try {
         const user = await database.query<User>(`${DELETE_USER_QUERY}${id}`);
 
@@ -83,4 +111,4 @@ export const deleteUser = async (id: number) => {
     } catch (err: any) {
         return err.detail ? err.detail : "Unexpected error occured, please try again.";
     }
-};
+};*/
