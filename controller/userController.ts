@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { User } from "../model/user";
-import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_CODE_QUERY, SELECT_USER_BY_ID_QUERY } from "../utils/queries";
+import { DELETE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY, SELECT_USER_BY_PIN_QUERY } from "../utils/queries";
 
 export const getUsers = async () => {
     try {
@@ -25,17 +25,17 @@ export const getUserById = async (id: number) => {
     };
 };
 
-export const getUserToken = async (code: string) => {
+export const getUserByPin = async (pin: string) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_CODE_QUERY}'${code}'`);
+        const user = await database.query<User>(`${SELECT_USER_BY_PIN_QUERY}'${pin}'`);
 
         if (user.rowCount > 0) {
             return user.rows[0];
         }
 
-        return `No token for that code.`;
+        return `No user for that pin.`;
     } catch (_) {
-        return `An error occurred getting the user token.`;
+        return `An error occurred getting the user.`;
     };
 }
 
@@ -43,16 +43,17 @@ export const insertOrUpdateUser = async (user: User) => {
     try {
         const inserted = await database.query<User>(
             `
-            INSERT INTO users (discord_id, name, discriminator, code, access_token, refresh_token, expires_in, admin)
-            VALUES(${user.discord_id}, '${user.name}', ${user.discriminator}, '${user.code}', '${user.access_token}', '${user.refresh_token}', to_timestamp(${user.expires_in / 1000}), ${user.admin}) 
+            INSERT INTO users (pin, discord_id, name, discriminator, code, access_token, refresh_token, expires_in, admin)
+            VALUES('${user.pin}', ${user.discord_id}, '${user.name}', ${user.discriminator}, '${user.code}', '${user.access_token}', '${user.refresh_token}', to_timestamp(${user.expires_in / 1000}), ${user.admin}) 
             ON CONFLICT (discord_id)
-            DO UPDATE SET 
+            DO UPDATE SET
+                pin = EXCLUDED.pin,
                 name = EXCLUDED.name, 
                 discriminator = EXCLUDED.discriminator, 
                 code = EXCLUDED.code, 
                 access_token = EXCLUDED.access_token, 
                 refresh_token = EXCLUDED.refresh_token, 
-                expires_in = EXLCUDED.expires_in, 
+                expires_in = EXCLUDED.expires_in, 
                 admin = EXCLUDED.admin
             RETURNING *;
             `

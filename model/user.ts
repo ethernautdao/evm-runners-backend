@@ -1,5 +1,6 @@
 export interface User {
     id?: number;
+    pin: string;
     discord_id: number;
     name: string;
     discriminator: number;

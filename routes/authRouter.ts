@@ -1,8 +1,7 @@
 import express, { Request, Response } from 'express';
 import { DISCORD_GET_USER_INFO, DISCORD_GET_USER_TOKEN, DISCORD_REDIRECT, REDIRECT_CALLBACK } from '../utils/constants';
 import { User } from '../model/user';
-import { getUserToken, insertOrUpdateUser } from '../controller/userController';
-import { checkUserCodeMiddleware } from '../middleware/authMiddleware';
+import { insertOrUpdateUser } from '../controller/userController';
 
 const fetch = require("node-fetch");
 
@@ -40,6 +39,7 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
 
                 const newUser: User = {
                     discord_id: userInfo.id,
+                    pin: generatePIN(),
                     name: userInfo.username,
                     discriminator: userInfo.discriminator,
                     code: code as string,
@@ -51,18 +51,25 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
 
                 await insertOrUpdateUser(newUser);
 
-                return res.status(200).send(`Run evm-runners auth again, sending ${code} as a parameter`);;
+                return res.status(200).send(`PIN code: ${newUser.pin}`);;
             })
-
             .catch((error: any) => {
                 return res.status(500).json({ error: error });
             });
     });
 });
 
+function generatePIN() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let randomStr1 = "";
+    let randomStr2 = "";
 
-authRouter.get("/token/:code?", checkUserCodeMiddleware, async (req: Request, res: Response) => {
-    res.send(await getUserToken(req.params.code));
-});
+    for (let i = 0; i < 4; i++) {
+        randomStr1 += chars.charAt(Math.floor(Math.random() * chars.length));
+        randomStr2 += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return `${randomStr1}-${randomStr2}`;
+};
 
 export default authRouter;
