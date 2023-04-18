@@ -1,15 +1,15 @@
 import express, { Request, Response } from 'express';
 import { getUserById, getUserByPin, getUsers } from '../controller/userController';
 import { checkUserIdMiddleware, checkUserPinMiddleware } from '../middleware/userMiddleware';
-import { checkAuthorizationTokenExistsMiddleware, checkIsAdmin } from '../middleware/authMiddleware';
+import { checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware } from '../middleware/authMiddleware';
 
 const userRouter = express.Router();
 
-userRouter.get("/", checkAuthorizationTokenExistsMiddleware, checkIsAdmin, async (req: Request, res: Response) => {
+userRouter.get("/", checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware, async (req: Request, res: Response) => {
     res.send(await getUsers());
 });
 
-userRouter.get("/:id?", checkAuthorizationTokenExistsMiddleware, checkIsAdmin, checkUserIdMiddleware, async (req: Request, res: Response) => {
+userRouter.get("/:id?", checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware, checkUserIdMiddleware, async (req: Request, res: Response) => {
     res.send(await getUserById(Number.parseInt(req.params.id)));
 });
 

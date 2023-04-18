@@ -18,7 +18,7 @@ export const checkAuthorizationTokenExistsMiddleware = async (req: Request, res:
     next();
 };
 
-export const checkIsAdmin = async (req: Request, res: Response, next: NextFunction) => {
+export const checkIsAdminMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { token, error } = checkToken(req.headers.authorization ?? "");
 
     if(error) {
