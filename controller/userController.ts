@@ -67,6 +67,20 @@ export const userIsAdmin = async (token: string) => {
     };
 }
 
+export const isTokenMatch = async (user_id: Number, token: string) => {
+    try {
+        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+
+        if (user.rowCount > 0) {
+            return user.rows[0].id === user_id;
+        }
+
+        return false;
+    } catch (_) {
+        return false;
+    };
+}
+
 export const insertOrUpdateUser = async (user: User) => {
     try {
         const inserted = await database.query<User>(

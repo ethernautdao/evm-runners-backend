@@ -29,7 +29,7 @@ export const getGasLeaderboardByLevel = async (id: number) => {
     try {
         const leaderboard = await database.query<Submission>(
             `
-            SELECT s.*, u.name AS user_name, l.name AS level_name
+            SELECT s.*, u.name AS user_name,  u.discriminator AS discriminator, l.name AS level_name
             FROM submissions s 
             JOIN users u ON s.user_id = u.id 
             JOIN levels l ON s.level_id = l.id 
@@ -52,7 +52,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
     try {
         const leaderboard = await database.query<Submission>(
             `
-            SELECT s.*, u.name AS user_name, l.name AS level_name
+            SELECT s.*, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
             FROM submissions s 
             JOIN users u ON s.user_id = u.id 
             JOIN levels l ON s.level_id = l.id 
