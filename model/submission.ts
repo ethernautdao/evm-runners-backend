@@ -7,4 +7,5 @@ export interface Submission {
     bytecode: string;
     gas: number;
     size: number;
+    submitted_at: number;
 };

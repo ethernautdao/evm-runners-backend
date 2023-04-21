@@ -29,12 +29,12 @@ export const getGasLeaderboardByLevel = async (id: number) => {
     try {
         const leaderboard = await database.query<Submission>(
             `
-            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, u.name AS user_name,  u.discriminator AS discriminator, l.name AS level_name
+            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, u.name AS user_name,  u.discriminator AS discriminator, l.name AS level_name
             FROM submissions s 
             JOIN users u ON s.user_id = u.id 
             JOIN levels l ON s.level_id = l.id 
             WHERE s.level_id = ${id} AND s.gas != 0 
-            ORDER BY s.gas ASC;
+            ORDER BY s.gas ASC, s.submitted_at ASC;
             `
         );
 
@@ -52,12 +52,12 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
     try {
         const leaderboard = await database.query<Submission>(
             `
-            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
+            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
             FROM submissions s 
             JOIN users u ON s.user_id = u.id 
             JOIN levels l ON s.level_id = l.id 
             WHERE s.level_id = ${id} AND s.size != 0 
-            ORDER BY s.gas ASC;
+            ORDER BY s.size ASC, s.submitted_at ASC;
             `
         );
 
@@ -74,10 +74,10 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
         const inserted = await database.query<Submission>(
-            `INSERT INTO submissions (level_id, user_id, bytecode, gas, size)
-            VALUES(${submission.level_id}, ${submission.user_id}, '${submission.bytecode}', ${submission.gas} , ${submission.size}) 
+            `INSERT INTO submissions (level_id, user_id, bytecode, gas, size, submitted_at)
+            VALUES(${submission.level_id}, ${submission.user_id}, '${submission.bytecode}', ${submission.gas}, ${submission.size}, to_timestamp(${submission.submitted_at / 1000})) 
             ON CONFLICT (user_id, level_id) 
-            DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size
+            DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size, submitted_at = EXCLUDED.submitted_at
             RETURNING *;`
         );
 
