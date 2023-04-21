@@ -92,7 +92,8 @@ const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, 
         level_name: undefined,
         bytecode: bytecode,
         gas: 0,
-        size: 0
+        size: 0,
+        submitted_at: Date.now()
     };
 
     if(testResults.fuzz.success && testResults.sanity.success && testResults.gas.success && testResults.size.success) {

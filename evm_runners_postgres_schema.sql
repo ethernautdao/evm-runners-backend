@@ -82,7 +82,8 @@ CREATE TABLE evm_runners.submissions (
     user_id integer NOT NULL,
     bytecode text NOT NULL,
     gas numeric DEFAULT 0 NOT NULL,
-    size numeric DEFAULT 0 NOT NULL
+    size numeric DEFAULT 0 NOT NULL,
+    submitted_at timestamp NOT NULL
 );
 
 
