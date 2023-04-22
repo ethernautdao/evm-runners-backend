@@ -1,12 +1,23 @@
 import { database } from "../db";
 import { Submission } from "../model/submission";
-import { SELECT_ALL_SUBMISSIONS_QUERY, SELECT_SUBMISSION_BY_ID_QUERY } from "../utils/queries";
+import { SELECT_ALL_SUBMISSIONS_QUERY, SELECT_SUBMISSION_BY_ID_QUERY, SELECT_SUBMISSION_BY_TOKEN_QUERY } from "../utils/queries";
 
 export const getSubmissions = async () => {
     try {
         const submissions = await database.query<Submission>(SELECT_ALL_SUBMISSIONS_QUERY);
         return submissions.rows;
     } catch (_) {
+        return "An error occured getting submissions.";
+    }
+};
+
+export const getSubmissionsByUser = async (token: string) => {
+    console.log(token)
+    try {
+        const submissions = await database.query<Submission>(`${SELECT_SUBMISSION_BY_TOKEN_QUERY}'${token}'`);
+        return submissions.rows;
+    } catch (err) {
+        console.log(err)
         return "An error occured getting submissions.";
     }
 };
