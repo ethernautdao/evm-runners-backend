@@ -6,3 +6,7 @@ export const isValidNumber = (number: any) => {
 export const isValidString = (string: any) => {
     return !(typeof string === 'string') || "" === string ? false : true;
 };
+
+export const formatAccessToken = (header: string) => {
+    return header?.split(" ")[1] ?? "";
+};

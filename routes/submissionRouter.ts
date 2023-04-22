@@ -1,13 +1,18 @@
 import express, { Request, Response } from 'express';
-import { getGasLeaderboardByLevel, getSizeLeaderboardByLevel, getSubmissionById, getSubmissions, insertOrUpdateSubmission } from '../controller/submissionController';
+import { getGasLeaderboardByLevel, getSizeLeaderboardByLevel, getSubmissionById, getSubmissions, getSubmissionsByUser, insertOrUpdateSubmission } from '../controller/submissionController';
 import { checkLevelIdMiddleware } from '../middleware/levelMiddleware';
 import { getSubmissionByIdMiddleware, postSubmissionMiddleware } from '../middleware/submissionMiddleware';
 import { checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware, checkAuthorizationTokenMatchesUserIdMiddleware } from '../middleware/authMiddleware';
+import { formatAccessToken } from '../utils/shared';
 
 const submissionRouter = express.Router();
 
 submissionRouter.get("/", checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware, async (req: Request, res: Response) => {
     res.send(await getSubmissions());
+});
+
+submissionRouter.get("/user", checkAuthorizationTokenExistsMiddleware, async (req: Request, res: Response) => {
+    res.send(await getSubmissionsByUser(formatAccessToken(req.headers.authorization ?? "")));
 });
 
 submissionRouter.get("/:id?", checkAuthorizationTokenExistsMiddleware, checkIsAdminMiddleware, getSubmissionByIdMiddleware, async (req: Request, res: Response) => {
