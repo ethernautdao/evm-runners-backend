@@ -112,6 +112,14 @@ There are three types of endpoints:
      curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/1
      ```
 
+    - GET BY USER AND LEVEL (ADMIN)
+
+     ```
+     curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/user/1
+     ```
+
+     This will take the authorization token and find any submission the corresponding user might have for the level with id `1`;
+
     - GET GAS LEADERBOARD BY LEVEL ID (ALL)
 
      ```
