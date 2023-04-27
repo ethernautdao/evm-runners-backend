@@ -1,8 +1,23 @@
 /* USERS */
 export const SELECT_ALL_USERS_QUERY = "SELECT * FROM users";
-export const SELECT_USER_BY_PIN_QUERY = "SELECT * FROM users WHERE pin = ";
-export const SELECT_USER_BY_TOKEN_QUERY = "SELECT * FROM users WHERE access_token = ";
-export const SELECT_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = ";
+export const SELECT_USER_BY_PIN_QUERY = "SELECT * FROM users WHERE pin = $1";
+export const SELECT_USER_BY_TOKEN_QUERY = "SELECT * FROM users WHERE access_token = $1";
+export const SELECT_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = $1";
+export const INSERT_OR_UPDATE_USER_QUERY = `
+    INSERT INTO users (pin, discord_id, name, discriminator, code, access_token, refresh_token, expires_in, admin)
+    VALUES($1, $2, $3, $4, $5, $6, $7, to_timestamp($8), $9) 
+    ON CONFLICT (discord_id)
+    DO UPDATE SET
+        pin = EXCLUDED.pin,
+        name = EXCLUDED.name, 
+        discriminator = EXCLUDED.discriminator, 
+        code = EXCLUDED.code, 
+        access_token = EXCLUDED.access_token, 
+        refresh_token = EXCLUDED.refresh_token, 
+        expires_in = EXCLUDED.expires_in, 
+        admin = EXCLUDED.admin
+    RETURNING *;
+`;
 //export const DELETE_USER_QUERY = "DELETE FROM users WHERE id = ";
 
 /* LEVELS */
