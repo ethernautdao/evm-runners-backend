@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { Submission } from "../model/submission";
-import { SELECT_ALL_SUBMISSIONS_QUERY, SELECT_SUBMISSION_BY_ID_QUERY, SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY } from "../utils/queries";
+import { INSERT_OR_UPDATE_SUBMISSION_QUERY, SELECT_ALL_SUBMISSIONS_QUERY, SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY, SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY, SELECT_SUBMISSION_BY_ID_QUERY, SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY } from "../utils/queries";
 
 export const getSubmissions = async () => {
     try {
@@ -22,7 +22,7 @@ export const getSubmissionsByTokenAndLevel = async (token: string, level: number
 
 export const getSubmissionById = async (id: number) => {
     try {
-        const submission = await database.query<Submission>(`${SELECT_SUBMISSION_BY_ID_QUERY}${id}`);
+        const submission = await database.query<Submission>(SELECT_SUBMISSION_BY_ID_QUERY, [id]);
 
         if (submission.rowCount > 0) {
             return submission.rows[0];
@@ -36,16 +36,7 @@ export const getSubmissionById = async (id: number) => {
 
 export const getGasLeaderboardByLevel = async (id: number) => {
     try {
-        const leaderboard = await database.query<Submission>(
-            `
-            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, u.name AS user_name,  u.discriminator AS discriminator, l.name AS level_name
-            FROM submissions s 
-            JOIN users u ON s.user_id = u.id 
-            JOIN levels l ON s.level_id = l.id 
-            WHERE s.level_id = ${id} AND s.gas != 0 
-            ORDER BY s.gas ASC, s.submitted_at ASC;
-            `
-        );
+        const leaderboard = await database.query<Submission>(SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY, [id]);
 
         if (leaderboard.rowCount > 0) {
             return leaderboard.rows;
@@ -59,16 +50,7 @@ export const getGasLeaderboardByLevel = async (id: number) => {
 
 export const getSizeLeaderboardByLevel = async (id: number) => {
     try {
-        const leaderboard = await database.query<Submission>(
-            `
-            SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
-            FROM submissions s 
-            JOIN users u ON s.user_id = u.id 
-            JOIN levels l ON s.level_id = l.id 
-            WHERE s.level_id = ${id} AND s.size != 0 
-            ORDER BY s.size ASC, s.submitted_at ASC;
-            `
-        );
+        const leaderboard = await database.query<Submission>(SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY, [id]);
 
         if (leaderboard.rowCount > 0) {
             return leaderboard.rows;
@@ -82,13 +64,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
 
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
-        const inserted = await database.query<Submission>(
-            `INSERT INTO submissions (level_id, user_id, bytecode, gas, size, submitted_at)
-            VALUES(${submission.level_id}, ${submission.user_id}, '${submission.bytecode}', ${submission.gas}, ${submission.size}, to_timestamp(${submission.submitted_at / 1000})) 
-            ON CONFLICT (user_id, level_id) 
-            DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size, submitted_at = EXCLUDED.submitted_at
-            RETURNING *;`
-        );
+        const inserted = await database.query<Submission>(INSERT_OR_UPDATE_SUBMISSION_QUERY, [submission.level_id, submission.user_id, submission.bytecode, submission.gas, submission.size, submission.submitted_at / 1000]);
 
         if (inserted.rowCount > 0) {
             return inserted.rows[0];
