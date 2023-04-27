@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { User } from "../model/user";
-import { SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY, SELECT_USER_BY_PIN_QUERY, SELECT_USER_BY_TOKEN_QUERY } from "../utils/queries";
+import { INSERT_OR_UPDATE_USER_QUERY, SELECT_ALL_USERS_QUERY, SELECT_USER_BY_ID_QUERY, SELECT_USER_BY_PIN_QUERY, SELECT_USER_BY_TOKEN_QUERY } from "../utils/queries";
 
 export const getUsers = async () => {
     try {
@@ -13,7 +13,7 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: number) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_ID_QUERY}${id}`);
+        const user = await database.query<User>(SELECT_USER_BY_ID_QUERY, [id]);
 
         if (user.rowCount > 0) {
             return user.rows[0];
@@ -27,7 +27,7 @@ export const getUserById = async (id: number) => {
 
 export const getUserByPin = async (pin: string) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_PIN_QUERY}'${pin}'`);
+        const user = await database.query<User>(SELECT_USER_BY_PIN_QUERY, [pin]);
 
         if (user.rowCount > 0) {
             return user.rows[0];
@@ -41,7 +41,7 @@ export const getUserByPin = async (pin: string) => {
 
 export const doesTokenExist = async (token: string) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+        const user = await database.query<User>(SELECT_USER_BY_TOKEN_QUERY, [token]);
 
         if (user.rowCount > 0) {
             return true;
@@ -55,7 +55,7 @@ export const doesTokenExist = async (token: string) => {
 
 export const userIsAdmin = async (token: string) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+        const user = await database.query<User>(SELECT_USER_BY_TOKEN_QUERY, [token]);
 
         if (user.rowCount > 0) {
             return user.rows[0].admin;
@@ -69,7 +69,7 @@ export const userIsAdmin = async (token: string) => {
 
 export const isTokenMatch = async (user_id: Number, token: string) => {
     try {
-        const user = await database.query<User>(`${SELECT_USER_BY_TOKEN_QUERY}'${token}'`);
+        const user = await database.query<User>(SELECT_USER_BY_TOKEN_QUERY, [token]);
 
         if (user.rowCount > 0) {
             return user.rows[0].id === user_id;
@@ -83,23 +83,7 @@ export const isTokenMatch = async (user_id: Number, token: string) => {
 
 export const insertOrUpdateUser = async (user: User) => {
     try {
-        const inserted = await database.query<User>(
-            `
-            INSERT INTO users (pin, discord_id, name, discriminator, code, access_token, refresh_token, expires_in, admin)
-            VALUES('${user.pin}', ${user.discord_id}, '${user.name}', ${user.discriminator}, '${user.code}', '${user.access_token}', '${user.refresh_token}', to_timestamp(${user.expires_in / 1000}), ${user.admin}) 
-            ON CONFLICT (discord_id)
-            DO UPDATE SET
-                pin = EXCLUDED.pin,
-                name = EXCLUDED.name, 
-                discriminator = EXCLUDED.discriminator, 
-                code = EXCLUDED.code, 
-                access_token = EXCLUDED.access_token, 
-                refresh_token = EXCLUDED.refresh_token, 
-                expires_in = EXCLUDED.expires_in, 
-                admin = EXCLUDED.admin
-            RETURNING *;
-            `
-        );
+        const inserted = await database.query<User>(INSERT_OR_UPDATE_USER_QUERY, [user.pin, user.discord_id, user.name, user.discriminator, user.code, user.access_token, user.refresh_token, user.expires_in / 1000, user.admin]);
 
         if (inserted.rowCount > 0) {
             return inserted.rows[0];
