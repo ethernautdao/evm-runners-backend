@@ -1,6 +1,6 @@
 import { database } from "../db";
 import { Level } from "../model/level";
-import { DELETE_LEVEL_QUERY, SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY, SELECT_LEVEL_TOTAL_SOLUTIONS, SELECT_TEST_FILE_BY_ID_QUERY } from "../utils/queries";
+import { DELETE_LEVEL_QUERY, INSERT_LEVEL_QUERY, SELECT_ALL_LEVELS_QUERY, SELECT_LEVEL_BY_ID_QUERY, SELECT_LEVEL_TOTAL_SOLUTIONS, SELECT_TEST_FILE_BY_ID_QUERY, UPDATE_LEVEL_QUERY } from "../utils/queries";
 
 export const getLevels = async () => {
     try {
@@ -13,7 +13,7 @@ export const getLevels = async () => {
 
 export const getLevelById = async (id: number) => {
     try {
-        const level = await database.query<Level>(`${SELECT_LEVEL_BY_ID_QUERY}${id}`);
+        const level = await database.query<Level>(SELECT_LEVEL_BY_ID_QUERY, [id]);
 
         if (level.rowCount > 0) {
             return level.rows[0];
@@ -27,7 +27,7 @@ export const getLevelById = async (id: number) => {
 
 export const getTestContractByLevelId = async (id: number) => {
     try {
-        const level = await database.query<Level>(`${SELECT_TEST_FILE_BY_ID_QUERY}${id}`);
+        const level = await database.query<Level>(SELECT_TEST_FILE_BY_ID_QUERY, [id]);
 
         if (level.rowCount > 0) {
             return level.rows[0].test_contract;
@@ -41,7 +41,7 @@ export const getTestContractByLevelId = async (id: number) => {
 
 export const getLevelTotalSolutions = async (id: number) => {
     try {
-        const solutions = await database.query(`${SELECT_LEVEL_TOTAL_SOLUTIONS}${id}`);
+        const solutions = await database.query(SELECT_LEVEL_TOTAL_SOLUTIONS, [id]);
         return solutions.rows[0].count;
     } catch (_) {
         return `An error occurred getting the total number of solution for this level.`;
@@ -53,20 +53,9 @@ export const insertOrUpdateLevel = async (level: Level) => {
         let inserted;
 
         if (level.id && typeof level.id === 'number') {
-            inserted = await database.query<Level>(
-                `INSERT INTO levels (id, name, position, test_contract)
-                VALUES(${level.id}, '${level.name}', ${level.position}, '${level.test_contract}') 
-                ON CONFLICT (id)
-                DO UPDATE SET name = EXCLUDED.name, position = EXCLUDED.position, test_contract = EXCLUDED.test_contract
-                RETURNING *;`
-            );
-
+            inserted = await database.query<Level>(UPDATE_LEVEL_QUERY, [level.id, level.name, level.position, level.test_contract]);
         } else {
-            inserted = await database.query<Level>(
-                `INSERT INTO levels (name, position, test_contract)
-                VALUES('${level.name}', ${level.position}, '${level.test_contract}')
-                RETURNING *;`
-            );
+            inserted = await database.query<Level>(INSERT_LEVEL_QUERY, [level.name, level.position, level.test_contract]);
         }
 
         if (inserted.rowCount > 0) {
@@ -81,7 +70,7 @@ export const insertOrUpdateLevel = async (level: Level) => {
 
 export const deleteLevel = async (id: number) => {
     try {
-        const level = await database.query<Level>(`${DELETE_LEVEL_QUERY}${id}`);
+        const level = await database.query<Level>(DELETE_LEVEL_QUERY, [id]);
 
         if (level.rowCount > 0) {
             return "Level deleted successfully.";

@@ -7,10 +7,22 @@ export const SELECT_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = ";
 
 /* LEVELS */
 export const SELECT_ALL_LEVELS_QUERY = "SELECT * FROM levels";
-export const SELECT_LEVEL_BY_ID_QUERY = "SELECT * FROM levels WHERE id = ";
-export const SELECT_TEST_FILE_BY_ID_QUERY = "SELECT test_contract FROM levels WHERE id = ";
-export const SELECT_LEVEL_TOTAL_SOLUTIONS = "SELECT COUNT(id) FROM submissions WHERE level_id = ";
-export const DELETE_LEVEL_QUERY = "DELETE FROM levels WHERE id = ";
+export const SELECT_LEVEL_BY_ID_QUERY = "SELECT * FROM levels WHERE id = $1";
+export const SELECT_TEST_FILE_BY_ID_QUERY = "SELECT test_contract FROM levels WHERE id = $1";
+export const SELECT_LEVEL_TOTAL_SOLUTIONS = "SELECT COUNT(id) FROM submissions WHERE level_id = $1";
+export const INSERT_LEVEL_QUERY = `
+    INSERT INTO levels (name, position, test_contract)
+    VALUES($1, $2, $3)
+    RETURNING *;
+`;
+export const UPDATE_LEVEL_QUERY = `
+    INSERT INTO levels (id, name, position, test_contract)
+    VALUES($1, $2, $3, $4) 
+    ON CONFLICT (id)
+    DO UPDATE SET name = EXCLUDED.name, position = EXCLUDED.position, test_contract = EXCLUDED.test_contract
+    RETURNING *;
+`;
+export const DELETE_LEVEL_QUERY = "DELETE FROM levels WHERE id = $1";
 
 /* SUBMISSION */
 export const SELECT_ALL_SUBMISSIONS_QUERY = "SELECT * FROM submissions";
