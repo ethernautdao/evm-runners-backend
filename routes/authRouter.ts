@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { DISCORD_GET_USER_INFO, DISCORD_GET_USER_TOKEN, DISCORD_REDIRECT, REDIRECT_CALLBACK } from '../utils/constants';
 import { User } from '../model/user';
 import { insertOrUpdateUser } from '../controller/userController';
+import PinCodeHtml from '../pages/pinCodeHtml';
 
 const fetch = require("node-fetch");
 
@@ -51,7 +52,7 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
 
                 await insertOrUpdateUser(newUser);
 
-                return res.status(200).send(`PIN code: ${newUser.pin}`);;
+                return res.status(200).send(PinCodeHtml(newUser.pin));;
             })
             .catch((error: any) => {
                 return res.status(500).json({ error: error });
