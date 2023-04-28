@@ -19,21 +19,14 @@ export default function PinCodeHtml(pin: string) {
           .panel {
             width: 80%;
             max-width: 500px;
-            height: auto;
             padding: 20px;
             background-color: #2b2b2b;
             box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
             text-align: center;
             border-radius: 10px;
           }
-          h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #f2f2f2;
-          }
-          p {
-            font-size: 2rem;
-            margin-bottom: 2rem;
+          h1, p {
+            margin: 0;
             color: #f2f2f2;
           }
           button {
@@ -44,7 +37,6 @@ export default function PinCodeHtml(pin: string) {
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 1.5rem;
             transition: all 0.3s ease-in-out;
           }
           button:hover {
@@ -60,12 +52,7 @@ export default function PinCodeHtml(pin: string) {
         </div>
         <script>
           function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
+            navigator.clipboard.writeText(text);
           }
         </script>
       </body>
