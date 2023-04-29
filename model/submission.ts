@@ -1,3 +1,9 @@
+export enum SubmissionLanguage {
+    "Solidity" = 0,
+    "Huff" = 1,
+    "Vyper" = 2
+};
+
 export interface Submission {
     id: number | undefined;
     level_id: number;
@@ -8,4 +14,5 @@ export interface Submission {
     gas: number;
     size: number;
     submitted_at: number;
+    language: string;
 };
