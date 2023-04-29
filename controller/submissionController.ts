@@ -64,7 +64,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
 
 export const insertOrUpdateSubmission = async (submission: Submission) => {
     try {
-        const inserted = await database.query<Submission>(INSERT_OR_UPDATE_SUBMISSION_QUERY, [submission.level_id, submission.user_id, submission.bytecode, submission.gas, submission.size, submission.submitted_at / 1000]);
+        const inserted = await database.query<Submission>(INSERT_OR_UPDATE_SUBMISSION_QUERY, [submission.level_id, submission.user_id, submission.bytecode, submission.gas, submission.size, submission.submitted_at / 1000, submission.language]);
 
         if (inserted.rowCount > 0) {
             return inserted.rows[0];

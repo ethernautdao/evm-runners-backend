@@ -83,7 +83,8 @@ CREATE TABLE evm_runners.submissions (
     bytecode text NOT NULL,
     gas numeric DEFAULT 0 NOT NULL,
     size numeric DEFAULT 0 NOT NULL,
-    submitted_at timestamp NOT NULL
+    submitted_at timestamp NOT NULL,
+    language character varying(100) NOT NULL
 );
 
 

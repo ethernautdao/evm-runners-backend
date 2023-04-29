@@ -2,8 +2,8 @@ import { exec } from "child_process";
 import { NextFunction, Request, Response } from "express";
 import { promisify } from "util";
 import { getTestContractByLevelId } from "../controller/levelController";
-import { convertToSolutionFeedback, SolutionFeedback, TestResult } from "../model/solution";
-import { Submission } from "../model/submission";
+import { convertToSolutionFeedback, SolutionFeedback } from "../model/solution";
+import { Submission, SubmissionLanguage } from "../model/submission";
 import { BYTECODE_REGEX, FORGE_TEST_COMMAND } from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
 
@@ -18,7 +18,7 @@ export const getSubmissionByIdMiddleware = (req: Request, res: Response, next: N
 };
 
 export const postSubmissionMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const { user_id, level_id, bytecode } = req.body;
+    const { user_id, level_id, bytecode, language } = req.body;
     const { validSubmission, submissionError } = isValidSubmission(user_id, level_id, bytecode);
 
     if (!validSubmission) {
@@ -31,7 +31,7 @@ export const postSubmissionMiddleware = async (req: Request, res: Response, next
         return res.status(400).json(solutionError);
     }
 
-    req.submission = evaluateSolution(result, user_id, level_id, bytecode);
+    req.submission = evaluateSolution(result, user_id, level_id, bytecode, language);
 
     next();
 };
@@ -83,7 +83,7 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
     }
 };
 
-const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, bytecode: any) => {
+const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, bytecode: any, language: number) => {
     let submission: Submission = {
         id: undefined,
         user_id: user,
@@ -93,7 +93,8 @@ const evaluateSolution = (testResults: SolutionFeedback, user: any, level: any, 
         bytecode: bytecode,
         gas: 0,
         size: 0,
-        submitted_at: Date.now()
+        submitted_at: Date.now(),
+        language: SubmissionLanguage[language] ?? "Unknown"
     };
 
     if(testResults.fuzz.success && testResults.sanity.success && testResults.gas.success && testResults.size.success) {
