@@ -84,7 +84,7 @@ CREATE TABLE evm_runners.submissions (
     gas numeric DEFAULT 0 NOT NULL,
     size numeric DEFAULT 0 NOT NULL,
     submitted_at timestamp NOT NULL,
-    language character varying(100) NOT NULL
+    type character varying(100) NOT NULL
 );
 
 
