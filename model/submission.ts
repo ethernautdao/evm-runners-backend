@@ -9,4 +9,5 @@ export interface Submission {
   size: number;
   submitted_at: number;
   type: string;
+  optimized_for: string | undefined;
 }

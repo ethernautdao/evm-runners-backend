@@ -102,10 +102,10 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
     );
 
     if (inserted.rowCount > 0) {
-      return inserted.rows[0];
+      return inserted.rows;
     }
 
-    return `Unable to create or update submission.`;
+    return `No submission saved. Make sure you're submitting a better solution either in gas or size.`;
   } catch (err: any) {
     return err.detail
       ? err.detail

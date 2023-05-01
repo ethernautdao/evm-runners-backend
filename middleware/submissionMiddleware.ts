@@ -135,6 +135,7 @@ const evaluateSolution = (
     size: 0,
     submitted_at: Date.now(),
     type: determineSolutionType(type.toLowerCase()),
+    optimized_for: undefined,
   };
 
   if (

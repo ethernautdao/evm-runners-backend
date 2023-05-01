@@ -81,10 +81,11 @@ CREATE TABLE evm_runners.submissions (
     level_id integer NOT NULL,
     user_id integer NOT NULL,
     bytecode text NOT NULL,
-    gas numeric DEFAULT 0 NOT NULL,
-    size numeric DEFAULT 0 NOT NULL,
+    gas numeric NOT NULL,
+    size numeric NOT NULL,
     submitted_at timestamp NOT NULL,
-    type character varying(100) NOT NULL
+    type character varying(100) NOT NULL,
+    optimized_for character varying(100) NOT NULL
 );
 
 
@@ -234,7 +235,7 @@ ALTER TABLE ONLY evm_runners.submissions
 --
 
 ALTER TABLE ONLY evm_runners.submissions
-    ADD CONSTRAINT unique_level_user UNIQUE (level_id, user_id);
+    ADD CONSTRAINT unique_level_user_optimized_for UNIQUE (level_id, user_id, optimized_for);
 
 
 --
