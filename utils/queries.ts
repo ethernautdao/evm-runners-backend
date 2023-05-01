@@ -43,25 +43,26 @@ export const SELECT_ALL_SUBMISSIONS_QUERY = "SELECT * FROM submissions";
 export const SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY = "SELECT s.* FROM submissions s INNER JOIN users u ON s.user_id = u.id WHERE u.access_token = $1 AND level_id = $2";
 export const SELECT_SUBMISSION_BY_ID_QUERY = "SELECT * FROM submissions WHERE id = $1";
 export const SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY = `
-    SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, s.type, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
+    SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, s.type, s.optimized_for, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
     FROM submissions s 
     JOIN users u ON s.user_id = u.id 
     JOIN levels l ON s.level_id = l.id 
-    WHERE s.level_id = $1 AND s.gas != 0 
+    WHERE s.level_id = $1 AND s.optimized_for = 'gas'
     ORDER BY s.gas ASC, s.submitted_at ASC;
 `;
 export const SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY = `
-    SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, s.type, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
+    SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, s.type, s.optimized_for, u.name AS user_name, u.discriminator AS discriminator, l.name AS level_name
     FROM submissions s 
     JOIN users u ON s.user_id = u.id 
     JOIN levels l ON s.level_id = l.id 
-    WHERE s.level_id = $1 AND s.size != 0 
+    WHERE s.level_id = $1 AND s.optimized_for = 'size'
     ORDER BY s.size ASC, s.submitted_at ASC;
 `;
 export const INSERT_OR_UPDATE_SUBMISSION_QUERY = `
-    INSERT INTO submissions (level_id, user_id, bytecode, gas, size, submitted_at, type)
-    VALUES($1, $2, $3, $4, $5, to_timestamp($6), $7) 
-    ON CONFLICT (user_id, level_id) 
+    INSERT INTO submissions (level_id, user_id, bytecode, gas, size, submitted_at, type, optimized_for)
+    VALUES ($1, $2, $3, $4, $5, to_timestamp($6), $7, 'gas'), ($1, $2, $3, $4, $5, to_timestamp($6), $7, 'size')
+    ON CONFLICT (user_id, level_id, optimized_for)
     DO UPDATE SET bytecode = EXCLUDED.bytecode, gas = EXCLUDED.gas, size = EXCLUDED.size, submitted_at = EXCLUDED.submitted_at, type = EXCLUDED.type
+    WHERE (EXCLUDED.optimized_for = 'gas' AND submissions.gas > EXCLUDED.gas) OR (EXCLUDED.optimized_for = 'size' AND submissions.size > EXCLUDED.size)
     RETURNING *;
 `;
