@@ -10,4 +10,4 @@ export interface Submission {
   submitted_at: number;
   type: string;
   optimized_for: string | undefined;
-};
+}
