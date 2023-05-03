@@ -28,4 +28,4 @@ Note that this requires a local foundry project like `evm-runners-levels` to run
    
 ## Endpoints
 
-The endpoints are the same as the main branch. The difference is in the host, which is now the `evm-runners` app. Something like `curl https://evm-runners.fly.dev/users/` should return the users.
+The endpoints are the same as the main branch. The difference is in the host, which in this deployment is `evmr.sh`. Something like `curl https://evmr.sh/users/` should return the users.
