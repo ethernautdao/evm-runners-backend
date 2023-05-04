@@ -1,5 +1,5 @@
 /* DISCORD AUTH */
-export const REDIRECT_CALLBACK = "https://evmr.sh/auth/discord/";
+export const REDIRECT_CALLBACK = "https://api.evmr.sh/auth/discord/";
 export const DISCORD_REDIRECT = `https://discordapp.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=identify&response_type=code&redirect_uri=${REDIRECT_CALLBACK}`;
 export const DISCORD_GET_USER_TOKEN = "https://discord.com/api/oauth2/token";
 export const DISCORD_GET_USER_INFO = "https://discord.com/api/users/@me";
