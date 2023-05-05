@@ -23,7 +23,7 @@ export const INSERT_OR_UPDATE_USER_QUERY = `
 export const SELECT_ALL_LEVELS_QUERY = "SELECT * FROM levels";
 export const SELECT_LEVEL_BY_ID_QUERY = "SELECT * FROM levels WHERE id = $1";
 export const SELECT_TEST_FILE_BY_ID_QUERY = "SELECT test_contract FROM levels WHERE id = $1";
-export const SELECT_LEVEL_TOTAL_SOLUTIONS = "SELECT COUNT(id) FROM submissions WHERE level_id = $1";
+export const SELECT_LEVEL_TOTAL_SOLUTIONS = "SELECT COUNT(DISTINCT user_id) FROM submissions WHERE level_id = $1";
 export const INSERT_LEVEL_QUERY = `
     INSERT INTO levels (name, position, test_contract)
     VALUES($1, $2, $3)
