@@ -70,6 +70,38 @@ submissionRouter.get(
   }
 );
 
+submissionRouter.get(
+  "/leaderboard/gas/top/:id?",
+  checkLevelIdMiddleware,
+  async (req: Request, res: Response) => {
+    let leaderboard = await getGasLeaderboardByLevel(
+      Number.parseInt(req.params.id)
+    );
+
+    if (leaderboard instanceof Array && leaderboard.length > 0) {
+      res.send(leaderboard[0]);
+    } else {
+      res.send(leaderboard);
+    }
+  }
+);
+
+submissionRouter.get(
+  "/leaderboard/size/top/:id?",
+  checkLevelIdMiddleware,
+  async (req: Request, res: Response) => {
+    let leaderboard = await getSizeLeaderboardByLevel(
+      Number.parseInt(req.params.id)
+    );
+
+    if (leaderboard instanceof Array && leaderboard.length > 0) {
+      res.send(leaderboard[0]);
+    } else {
+      res.send(leaderboard);
+    }
+  }
+);
+
 submissionRouter.post(
   "/",
   postSubmissionMiddleware,
