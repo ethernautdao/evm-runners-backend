@@ -81,6 +81,7 @@ There are three types of endpoints:
     ```
 
     - POST OR PUT (ADMIN)
+    
     If the token is for an user that is an admin, this will create the level `Average`, with position `1`, meaning it is the first level. `AverageTest` is the name of the foundry test file.
     If you want to update it use `-d '{"id": 1, "name":"Average_updated", "position":2, "test_contract":"AverageTest_Updated" }' `
 
@@ -140,6 +141,7 @@ There are three types of endpoints:
 
     ```
     curl http://localhost:1337/submissions/leaderboard/size/top/1
+    ```
 
     - POST OR PUT (AUTH)
 
