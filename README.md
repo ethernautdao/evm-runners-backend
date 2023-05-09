@@ -42,105 +42,115 @@ There are three types of endpoints:
 
 - <b>User</b>
     - GET USER INFO (ALL)
+    
+    This will return the information for the user with the given `PIN`.
 
-     ```
-     curl http://localhost:1337/users/info/PIN 
-     ```
-
-     This will return the information for the user with the given `PIN`.
+    ```
+    curl http://localhost:1337/users/info/PIN 
+    ```
      
     - GET ALL (ADMIN)
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/users
-     ```
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/users
+    ```
 
     - GET BY ID (ADMIN)
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/users/1
-     ```
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/users/1
+    ```
 
 - <b>Level</b>
     - GET (ALL)
 
-     ```
-     curl http://localhost:1337/levels
-     ```
+    ```
+    curl http://localhost:1337/levels
+    ```
 
     - GET BY ID (ALL)
 
-     ```
-     curl http://localhost:1337/levels/1
-     ```
-
+    ```
+    curl http://localhost:1337/levels/1
+    ```
 
     - GET TOTAL SOLUTIONS (ALL)
 
-     ```
-     curl http://localhost:1337/levels/1/total
-     ```
+    ```
+    curl http://localhost:1337/levels/1/total
+    ```
 
     - POST OR PUT (ADMIN)
+    If the token is for an user that is an admin, this will create the level `Average`, with position `1`, meaning it is the first level. `AverageTest` is the name of the foundry test file.
+    If you want to update it use `-d '{"id": 1, "name":"Average_updated", "position":2, "test_contract":"AverageTest_Updated" }' `
 
-     ```
-     curl -X POST http://localhost:1337/levels \
-     -H "Authorization: Bearer {token}" \
-     -H "Content-Type: application/json" \
-     -d '{"name":"Average", "position":1, "test_contract":"AverageTest" }' 
-     ```
-     If the token is for an user that is an admin, this will create the level `Average`, with position `1`, meaning it is the first level. `AverageTest` is the name of the foundry test file.
-     
-     If you want to update it use `-d '{"id": 1, "name":"Average_updated", "position":2, "test_contract":"AverageTest_Updated" }' `
+    ```
+    curl -X POST http://localhost:1337/levels \
+    -H "Authorization: Bearer {token}" \
+    -H "Content-Type: application/json" \
+    -d '{"name":"Average", "position":1, "test_contract":"AverageTest" }' 
+    ```
 
     - DELETE (ADMIN)
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/levels/1
-     ```
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/levels/1
+    ```
 
 - <b>Submission</b>
     - GET (ADMIN)
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions
-     ```
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions
+    ```
 
     - GET BY ID (ADMIN)
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/1
-     ```
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/1
+    ```
 
     - GET BY USER AND LEVEL (ADMIN)
+     
+    This will take the authorization token and find any submission the corresponding user might have for the level with id `1`;
 
-     ```
-     curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/user/1
-     ```
-
-     This will take the authorization token and find any submission the corresponding user might have for the level with id `1`;
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/submissions/user/1
+    ```
 
     - GET GAS LEADERBOARD BY LEVEL ID (ALL)
 
-     ```
-     curl http://localhost:1337/submissions/leaderboard/gas/1
-     ```
+    ```
+    curl http://localhost:1337/submissions/leaderboard/gas/1
+    ```
 
     - GET SIZE LEADERBOARD BY LEVEL ID (ALL)
 
-     ```
-     curl http://localhost:1337/submissions/leaderboard/size/1
-     ```
+    ```
+    curl http://localhost:1337/submissions/leaderboard/size/1
+    ```
+
+    - GET TOP GAS SUBMISSION BY LEVEL ID (ALL)
+
+    ```
+    curl http://localhost:1337/submissions/leaderboard/gas/top/1
+    ```
+
+    - GET TOP SIZE SUBMISSION BY LEVEL ID (ALL)
+
+    ```
+    curl http://localhost:1337/submissions/leaderboard/size/top/1
 
     - POST OR PUT (AUTH)
 
-     ```
-     curl -X POST http://localhost:1337/submissions \
-     -H "Authorization: Bearer {token}" \
-     -H "Content-Type: application/json" \
-     -d '{ "bytecode": "0x608060...", "user_id": "1", "level_id": "3" }' 
-     ```
-     User with ID 1 is submitting a solution for level 3. This solution will be tested. If it passes the tests it is saved. If the user already has a solution for this level, it is updated.
+    User with ID 1 is submitting a solution for level 3. This solution will be tested. If it passes the tests it is saved. If the user already has a solution for this level, it is updated.
+
+    ```
+    curl -X POST http://localhost:1337/submissions \
+    -H "Authorization: Bearer {token}" \
+    -H "Content-Type: application/json" \
+    -d '{ "bytecode": "0x608060...", "user_id": "1", "level_id": "3" }' 
+    ```
      
 ### Run this application
 
