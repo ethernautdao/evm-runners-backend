@@ -11,3 +11,9 @@ export interface Submission {
   type: string;
   optimized_for: string | undefined;
 }
+
+export interface InsertOrUpdateSubmissionResult {
+  submissions: [Submission] | null;
+  gas_rank: string;
+  size_rank: string;
+}

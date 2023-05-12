@@ -1,5 +1,5 @@
 import { database } from "../db";
-import { Submission } from "../model/submission";
+import { InsertOrUpdateSubmissionResult, Submission } from "../model/submission";
 import {
   INSERT_OR_UPDATE_SUBMISSION_QUERY,
   SELECT_ALL_SUBMISSIONS_QUERY,
@@ -88,7 +88,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
 
 export const insertOrUpdateSubmission = async (submission: Submission) => {
   try {
-    const inserted = await database.query<Submission>(
+    const inserted = await database.query<InsertOrUpdateSubmissionResult>(
       INSERT_OR_UPDATE_SUBMISSION_QUERY,
       [
         submission.level_id,
@@ -101,7 +101,7 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
       ]
     );
 
-    if (inserted.rowCount > 0) {
+    if (inserted.rowCount > 0 && inserted.rows[0].submissions !== null) {
       return inserted.rows;
     }
 
