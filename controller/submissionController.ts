@@ -1,5 +1,8 @@
 import { database } from "../db";
-import { InsertOrUpdateSubmissionResult, Submission } from "../model/submission";
+import {
+  InsertOrUpdateSubmissionResult,
+  Submission,
+} from "../model/submission";
 import {
   INSERT_OR_UPDATE_SUBMISSION_QUERY,
   SELECT_ALL_SUBMISSIONS_QUERY,
@@ -42,11 +45,7 @@ export const getSubmissionById = async (id: number) => {
       [id]
     );
 
-    if (submission.rowCount > 0) {
-      return submission.rows[0];
-    }
-
-    return `No results for id ${id}`;
+    return submission.rows[0];
   } catch (_) {
     return `An error occurred getting submission by id`;
   }
@@ -59,11 +58,7 @@ export const getGasLeaderboardByLevel = async (id: number) => {
       [id]
     );
 
-    if (leaderboard.rowCount > 0) {
-      return leaderboard.rows;
-    }
-
-    return `No results`;
+    return leaderboard.rows;
   } catch (_) {
     return "An error occurred getting the gas leaderboard.";
   }
@@ -76,11 +71,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
       [id]
     );
 
-    if (leaderboard.rowCount > 0) {
-      return leaderboard.rows;
-    }
-
-    return `No results`;
+    return leaderboard.rows;
   } catch (_) {
     return "An error occurred getting the gas leaderboard.";
   }
@@ -101,11 +92,7 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
       ]
     );
 
-    if (inserted.rowCount > 0 && inserted.rows[0].submissions !== null) {
-      return inserted.rows;
-    }
-
-    return `No submission saved. Make sure you're submitting a better solution either in gas or size.`;
+    return inserted.rows;
   } catch (err: any) {
     return err.detail
       ? err.detail

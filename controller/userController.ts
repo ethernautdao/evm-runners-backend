@@ -20,12 +20,7 @@ export const getUsers = async () => {
 export const getUserById = async (id: number) => {
   try {
     const user = await database.query<User>(SELECT_USER_BY_ID_QUERY, [id]);
-
-    if (user.rowCount > 0) {
-      return user.rows[0];
-    }
-
-    return `No results for id ${id}`;
+    return user.rows[0];
   } catch (_) {
     return `An error occurred getting user by id.`;
   }
@@ -34,12 +29,7 @@ export const getUserById = async (id: number) => {
 export const getUserByPin = async (pin: string) => {
   try {
     const user = await database.query<User>(SELECT_USER_BY_PIN_QUERY, [pin]);
-
-    if (user.rowCount > 0) {
-      return user.rows[0];
-    }
-
-    return `No user for that pin.`;
+    return user.rows[0];
   } catch (_) {
     return `An error occurred getting the user.`;
   }
@@ -107,11 +97,7 @@ export const insertOrUpdateUser = async (user: User) => {
       user.admin,
     ]);
 
-    if (inserted.rowCount > 0) {
-      return inserted.rows[0];
-    }
-
-    return `Unable to create or update user.`;
+    return inserted.rows[0];
   } catch (err: any) {
     return err.detail
       ? err.detail

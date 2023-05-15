@@ -22,12 +22,7 @@ export const getLevels = async () => {
 export const getLevelById = async (id: number) => {
   try {
     const level = await database.query<Level>(SELECT_LEVEL_BY_ID_QUERY, [id]);
-
-    if (level.rowCount > 0) {
-      return level.rows[0];
-    }
-
-    return `No results for id ${id}`;
+    return level.rows[0];
   } catch (_) {
     return `An error occurred getting level by id.`;
   }
@@ -54,7 +49,7 @@ export const getLevelTotalSolutions = async (id: number) => {
     const solutions = await database.query(SELECT_LEVEL_TOTAL_SOLUTIONS, [id]);
     return solutions.rows[0].count;
   } catch (_) {
-    return `An error occurred getting the total number of solution for this level.`;
+    return "An error occurred getting the total number of solution for this level.";
   }
 };
 
@@ -77,11 +72,7 @@ export const insertOrUpdateLevel = async (level: Level) => {
       ]);
     }
 
-    if (inserted.rowCount > 0) {
-      return inserted.rows[0];
-    }
-
-    return "Unable to create or update level.";
+    return inserted.rows[0];
   } catch (err: any) {
     return err.detail
       ? err.detail
