@@ -4,8 +4,14 @@ import { promisify } from "util";
 import { getTestContractByLevelId } from "../controller/levelController";
 import { convertToSolutionFeedback, SolutionFeedback } from "../model/solution";
 import { Submission } from "../model/submission";
-import { BYTECODE_REGEX, FORGE_TEST_COMMAND } from "../utils/constants";
+import {
+  BYTECODE_REGEX,
+  FORGE_TEST_COMMAND,
+  MIN_BLOCK_DIFFICULTY,
+  MIN_BLOCK_NUMBER,
+} from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
+import { webcrypto } from "crypto";
 
 const promisifiedExec = promisify(exec);
 
@@ -95,7 +101,25 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
   try {
     output = await promisifiedExec(`${FORGE_TEST_COMMAND} ${test_file}`, {
       cwd: `${process.env.TESTS_FOLDER_PATH}`,
-      env: { ...process.env, BYTECODE: `${bytecode}` },
+      env: {
+        ...process.env,
+        BYTECODE: `${bytecode}`,
+        FOUNDRY_BLOCK_COINBASE: generateRandomAddress(),
+        FOUNDRY_BLOCK_TIMESTAMP: `${generateRandomTimestamp()}`,
+        FOUNDRY_BLOCK_NUMBER: `${generateRandomNumber(
+          MIN_BLOCK_NUMBER,
+          MIN_BLOCK_NUMBER * 2
+        )}`,
+        FOUNDRY_BLOCK_DIFFICULTY: `${parseInt(
+          `${generateRandomNumber(
+            MIN_BLOCK_DIFFICULTY,
+            MIN_BLOCK_DIFFICULTY * 2
+          )}`
+        )}`,
+        BLOCK_PREV_RANDAO: generateRandomPrevRandao(),
+        FOUNDRY_GAS_PRICE: `${generateRandomNumber(0, 200)}`,
+        FOUNDRY_BLOCK_BASE_FEE_PER_GAS: `${generateRandomNumber(0, 200)}`,
+      },
     });
     return {
       result: convertToSolutionFeedback(output),
@@ -174,4 +198,36 @@ const formatError = (error: string) => {
   }
 
   return "Unexpected error when testing the solution: " + error;
+};
+
+//Random number
+const generateRandomNumber = (min: number, max: number): number => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+//Random Ethereum address
+const generateRandomAddress = (): string => {
+  const bytes = new Uint8Array(20);
+  webcrypto.getRandomValues(bytes);
+  const hexString = Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+  return "0x" + hexString;
+};
+
+//Random timestamp between 1 Jan 2000 and now
+const generateRandomTimestamp = (): number => {
+  const start = new Date("2000-01-01").getTime() / 1000;
+  const end = Math.floor(Date.now() / 1000);
+  return generateRandomNumber(start, end);
+};
+
+//Random PrevRandao
+const generateRandomPrevRandao = (): string => {
+  const bytes = new Uint8Array(32);
+  webcrypto.getRandomValues(bytes);
+  const hexString = Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+  return "0x" + hexString;
 };

@@ -6,4 +6,7 @@ export const DISCORD_GET_USER_INFO = "https://discord.com/api/users/@me";
 
 /* SOLUTION TESTING */
 export const BYTECODE_REGEX: RegExp = /^0x[0-9A-Fa-f]+$/;
-export const FORGE_TEST_COMMAND = "forge test --silent --json --match-contract";
+export const FORGE_TEST_COMMAND =
+  "forge test --silent --json --block-prevrandao $BLOCK_PREV_RANDAO --match-contract";
+export const MIN_BLOCK_NUMBER = 17273644;
+export const MIN_BLOCK_DIFFICULTY = 5.8750003716598352816469e22;
