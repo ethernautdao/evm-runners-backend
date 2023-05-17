@@ -47,7 +47,7 @@ contract FibHashTestBase is Test {
         fibhash.fibhash(x, k);
     }
 
-    function test_s01e02_size() public {
+    function test_s01e02_size() public view {
         console2.log("Contract size:", address(fibhash).code.length);
     }
 
