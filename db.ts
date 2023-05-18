@@ -1,6 +1,8 @@
 import { Pool } from "pg";
+import { cache } from "./cache";
 
 let database: Pool;
+
 const connectDb = async () => {
   try {
     database = new Pool({
@@ -12,7 +14,9 @@ const connectDb = async () => {
       keepAlive: true,
     });
 
-    database.on("error", (err) => console.log("### NODE-PG ERROR ###\n", err));
+    database.on("error", (err: any) =>
+      console.log("### NODE-PG ERROR ###\n", err)
+    );
   } catch (error) {
     console.log(error);
   }
@@ -23,6 +27,11 @@ const closeConnection = async (_: any) => {
   if (database) {
     await database.end();
   }
+
+  if (cache) {
+    cache.close();
+  }
+
   process.exit(); // Exit with default success-code '0'.
 };
 
