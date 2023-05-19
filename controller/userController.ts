@@ -29,6 +29,23 @@ export const getUsers = async () => {
   }
 };
 
+export const getUserByToken = async (token: string) => {
+  try {
+    const cachedData: any = await getCachedData(usersCacheKey);
+
+    if (cachedData) {
+      return cachedData.find((user: any) => user.access_token === token);
+    } else {
+      const user = await database.query<User>(SELECT_USER_BY_TOKEN_QUERY, [
+        token,
+      ]);
+      return user.rows[0];
+    }
+  } catch (_) {
+    return `An error occurred getting the user.`;
+  }
+};
+
 export const getUserById = async (id: number) => {
   try {
     const cachedData: any = await getCachedData(usersCacheKey);
@@ -109,7 +126,8 @@ export const isTokenMatch = async (user_id: Number, token: string) => {
 
     if (cachedData) {
       return (
-        cachedData.find((user: any) => user.token === token).id === `${user_id}`
+        cachedData.find((user: any) => user.access_token === token).id ===
+        `${user_id}`
       );
     } else {
       return (
@@ -136,8 +154,10 @@ export const insertOrUpdateUser = async (user: User) => {
       user.admin,
     ]);
 
-    //Delete cache so it updates the next time a request is made
+    //Delete cache and initialize it again
     cache.del(usersCacheKey);
+    await getUsers();
+
     return inserted.rows[0];
   } catch (err: any) {
     return err.detail

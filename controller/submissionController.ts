@@ -1,23 +1,42 @@
+import { cache, getCachedData } from "../cache";
 import { database } from "../db";
 import {
   InsertOrUpdateSubmissionResult,
   Submission,
 } from "../model/submission";
 import {
+  gasLeaderboardsCacheKey,
+  sizeLeaderboardsCacheKey,
+  submissionsCacheKey,
+} from "../utils/constants";
+import {
   INSERT_OR_UPDATE_SUBMISSION_QUERY,
   SELECT_ALL_SUBMISSIONS_QUERY,
   SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY,
   SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
+  SELECT_SUBMISSION_BY_BYTECODE_QUERY,
   SELECT_SUBMISSION_BY_ID_QUERY,
   SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
 } from "../utils/queries";
+import { getUserByToken } from "./userController";
 
 export const getSubmissions = async () => {
   try {
-    const submissions = await database.query<Submission>(
-      SELECT_ALL_SUBMISSIONS_QUERY
-    );
-    return submissions.rows;
+    //Get cached data
+    const cachedData = await getCachedData(submissionsCacheKey);
+
+    //If cache exists, use it
+    if (cachedData) {
+      return cachedData;
+    } else {
+      //Else, get the data from the db and then cache it
+      const submissions = await database.query<Submission>(
+        SELECT_ALL_SUBMISSIONS_QUERY
+      );
+
+      cache.set(submissionsCacheKey, JSON.stringify(submissions.rows));
+      return submissions.rows;
+    }
   } catch (_) {
     return "An error occured getting submissions.";
   }
@@ -28,11 +47,22 @@ export const getSubmissionsByTokenAndLevel = async (
   level: number
 ) => {
   try {
-    const submissions = await database.query<Submission>(
-      SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
-      [token, level]
-    );
-    return submissions.rows;
+    const cachedData: any = await getCachedData(submissionsCacheKey);
+
+    if (cachedData) {
+      const user = await getUserByToken(token);
+      return cachedData.filter(
+        (submission: any) =>
+          submission.level_id === level &&
+          submission.user_id === Number.parseInt(user.id)
+      );
+    } else {
+      const submissions = await database.query<Submission>(
+        SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
+        [token, level]
+      );
+      return submissions.rows;
+    }
   } catch (_) {
     return "An error occured getting submissions.";
   }
@@ -40,12 +70,39 @@ export const getSubmissionsByTokenAndLevel = async (
 
 export const getSubmissionById = async (id: number) => {
   try {
-    const submission = await database.query<Submission>(
-      SELECT_SUBMISSION_BY_ID_QUERY,
-      [id]
-    );
+    const cachedData: any = await getCachedData(submissionsCacheKey);
 
-    return submission.rows[0];
+    if (cachedData) {
+      return cachedData.find((submission: any) => submission.id === `${id}`);
+    } else {
+      const submission = await database.query<Submission>(
+        SELECT_SUBMISSION_BY_ID_QUERY,
+        [id]
+      );
+
+      return submission.rows[0];
+    }
+  } catch (_) {
+    return `An error occurred getting submission by id`;
+  }
+};
+
+export const getSubmissionByBytecode = async (bytecode: string) => {
+  try {
+    const cachedData: any = await getCachedData(submissionsCacheKey);
+
+    if (cachedData) {
+      return cachedData.find(
+        (submission: any) => submission.bytecode === bytecode
+      );
+    } else {
+      const submission = await database.query<Submission>(
+        SELECT_SUBMISSION_BY_BYTECODE_QUERY,
+        [bytecode]
+      );
+
+      return submission.rows[0];
+    }
   } catch (_) {
     return `An error occurred getting submission by id`;
   }
@@ -53,12 +110,24 @@ export const getSubmissionById = async (id: number) => {
 
 export const getGasLeaderboardByLevel = async (id: number) => {
   try {
-    const leaderboard = await database.query<Submission>(
-      SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY,
-      [id]
+    const cachedData: any = await getCachedData(
+      `${gasLeaderboardsCacheKey}-${id}`
     );
 
-    return leaderboard.rows;
+    if (cachedData) {
+      return cachedData;
+    } else {
+      const leaderboard = await database.query<Submission>(
+        SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY,
+        [id]
+      );
+
+      cache.set(
+        `${gasLeaderboardsCacheKey}-${id}`,
+        JSON.stringify(leaderboard.rows)
+      );
+      return leaderboard.rows;
+    }
   } catch (_) {
     return "An error occurred getting the gas leaderboard.";
   }
@@ -66,12 +135,24 @@ export const getGasLeaderboardByLevel = async (id: number) => {
 
 export const getSizeLeaderboardByLevel = async (id: number) => {
   try {
-    const leaderboard = await database.query<Submission>(
-      SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
-      [id]
+    const cachedData: any = await getCachedData(
+      `${sizeLeaderboardsCacheKey}-${id}`
     );
 
-    return leaderboard.rows;
+    if (cachedData) {
+      return cachedData;
+    } else {
+      const leaderboard = await database.query<Submission>(
+        SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
+        [id]
+      );
+
+      cache.set(
+        `${sizeLeaderboardsCacheKey}-${id}`,
+        JSON.stringify(leaderboard.rows)
+      );
+      return leaderboard.rows;
+    }
   } catch (_) {
     return "An error occurred getting the gas leaderboard.";
   }
@@ -91,6 +172,12 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
         submission.type,
       ]
     );
+
+    //Delete cache and initialize it again. The leaderboard functions should be called with some regularity so there's no need to initialize here.
+    cache.del(submissionsCacheKey);
+    cache.del(`${gasLeaderboardsCacheKey}-${submission.level_id}`);
+    cache.del(`${sizeLeaderboardsCacheKey}-${submission.level_id}`);
+    await getSubmissions();
 
     return inserted.rows;
   } catch (err: any) {

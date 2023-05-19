@@ -2,6 +2,8 @@
 export const levelsCacheKey = "levels";
 export const usersCacheKey = "users";
 export const submissionsCacheKey = "submissions";
+export const gasLeaderboardsCacheKey = "gas-leaderboard";
+export const sizeLeaderboardsCacheKey = "size-leaderboard";
 
 /* DISCORD AUTH */
 export const REDIRECT_CALLBACK = "http://localhost:1337/auth/discord/";

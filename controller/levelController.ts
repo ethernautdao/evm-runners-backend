@@ -106,8 +106,9 @@ export const insertOrUpdateLevel = async (level: Level) => {
       ]);
     }
 
-    //Delete cache so it updates the next time a request is made
+    //Delete cache and initialize it again
     cache.del(levelsCacheKey);
+    await getLevels();
 
     return inserted.rows[0];
   } catch (err: any) {
@@ -122,7 +123,9 @@ export const deleteLevel = async (id: number) => {
     const level = await database.query<Level>(DELETE_LEVEL_QUERY, [id]);
 
     if (level.rowCount > 0) {
+      //Delete cache and initialize it again
       cache.del(levelsCacheKey);
+      await getLevels();
 
       return "Level deleted successfully.";
     }

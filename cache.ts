@@ -20,7 +20,6 @@ const createCache = async () => {
 };
 
 const initializeCache = async () => {
-  // Initialize cache
   await getLevels();
   await getUsers();
   await getSubmissions();
