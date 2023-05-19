@@ -104,9 +104,9 @@ submissionRouter.get(
 
 submissionRouter.post(
   "/",
-  postSubmissionMiddleware,
-  checkAuthorizationTokenExistsMiddleware,
   checkAuthorizationTokenMatchesUserIdMiddleware,
+  checkAuthorizationTokenExistsMiddleware,
+  postSubmissionMiddleware,
   async (req: Request, res: Response) => {
     res.send(await insertOrUpdateSubmission(req.submission));
   }

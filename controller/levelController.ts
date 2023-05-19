@@ -1,5 +1,7 @@
+import { cache, getCachedData } from "../cache";
 import { database } from "../db";
 import { Level } from "../model/level";
+import { levelsCacheKey, submissionsCacheKey } from "../utils/constants";
 import {
   DELETE_LEVEL_QUERY,
   INSERT_LEVEL_QUERY,
@@ -12,8 +14,20 @@ import {
 
 export const getLevels = async () => {
   try {
-    const levels = await database.query<Level>(SELECT_ALL_LEVELS_QUERY);
-    return levels.rows;
+    //Get cached data
+    const cachedData = await getCachedData(levelsCacheKey);
+
+    //If cache exists, use it
+    if (cachedData) {
+      console.log("LEVEL CACHED DATA")
+      return cachedData;
+    } else {
+      console.log("NO LEVEL CACHED DATA")
+      //Else, get the data from the db and then cache it
+      const levels = await database.query<Level>(SELECT_ALL_LEVELS_QUERY);
+      cache.set(levelsCacheKey, JSON.stringify(levels.rows));
+      return levels.rows;
+    }
   } catch (_) {
     return "An error occurred getting levels";
   }
@@ -21,8 +35,14 @@ export const getLevels = async () => {
 
 export const getLevelById = async (id: number) => {
   try {
-    const level = await database.query<Level>(SELECT_LEVEL_BY_ID_QUERY, [id]);
-    return level.rows[0];
+    const cachedData: any = await getCachedData(levelsCacheKey);
+
+    if (cachedData) {
+      return cachedData.find((level: any) => level.id === `${id}`);
+    } else {
+      const level = await database.query<Level>(SELECT_LEVEL_BY_ID_QUERY, [id]);
+      return level.rows[0];
+    }
   } catch (_) {
     return `An error occurred getting level by id.`;
   }
@@ -30,14 +50,20 @@ export const getLevelById = async (id: number) => {
 
 export const getTestContractByLevelId = async (id: number) => {
   try {
-    const level = await database.query<Level>(SELECT_TEST_FILE_BY_ID_QUERY, [
-      id,
-    ]);
+    const cachedData: any = await getCachedData(levelsCacheKey);
 
-    if (level.rowCount > 0) {
-      return level.rows[0].test_contract;
+    if (cachedData) {
+      return cachedData.find((level: any) => level.id === `${id}`)
+        .test_contract;
+    } else {
+      const level = await database.query<Level>(SELECT_TEST_FILE_BY_ID_QUERY, [
+        id,
+      ]);
+
+      if (level.rowCount > 0) {
+        return level.rows[0].test_contract;
+      }
     }
-
     return undefined;
   } catch (_) {
     return undefined;
@@ -46,8 +72,18 @@ export const getTestContractByLevelId = async (id: number) => {
 
 export const getLevelTotalSolutions = async (id: number) => {
   try {
-    const solutions = await database.query(SELECT_LEVEL_TOTAL_SOLUTIONS, [id]);
-    return solutions.rows[0].count;
+    const cachedData: any = await getCachedData(submissionsCacheKey);
+
+    if (cachedData) {
+      return cachedData.filter(
+        (submission: any) => submission.level_id === `${id}`
+      ).length;
+    } else {
+      const solutions = await database.query(SELECT_LEVEL_TOTAL_SOLUTIONS, [
+        id,
+      ]);
+      return solutions.rows[0].count;
+    }
   } catch (_) {
     return "An error occurred getting the total number of solution for this level.";
   }
@@ -72,6 +108,10 @@ export const insertOrUpdateLevel = async (level: Level) => {
       ]);
     }
 
+    //Delete cache and initialize it again
+    cache.del(levelsCacheKey);
+    await getLevels();
+
     return inserted.rows[0];
   } catch (err: any) {
     return err.detail
@@ -85,6 +125,10 @@ export const deleteLevel = async (id: number) => {
     const level = await database.query<Level>(DELETE_LEVEL_QUERY, [id]);
 
     if (level.rowCount > 0) {
+      //Delete cache and initialize it again
+      cache.del(levelsCacheKey);
+      await getLevels();
+
       return "Level deleted successfully.";
     }
 

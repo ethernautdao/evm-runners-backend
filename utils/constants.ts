@@ -1,3 +1,10 @@
+/* CACHE KEYS */
+export const levelsCacheKey = "levels";
+export const usersCacheKey = "users";
+export const submissionsCacheKey = "submissions";
+export const gasLeaderboardsCacheKey = "gas-leaderboard";
+export const sizeLeaderboardsCacheKey = "size-leaderboard";
+
 /* DISCORD AUTH */
 export const REDIRECT_CALLBACK = "https://api.evmr.sh/auth/discord/";
 export const DISCORD_REDIRECT = `https://discordapp.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&scope=identify&response_type=code&redirect_uri=${REDIRECT_CALLBACK}`;

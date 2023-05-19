@@ -12,6 +12,7 @@ import {
 } from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
 import { webcrypto } from "crypto";
+import { getSubmissionByBytecodeAndLevel } from "../controller/submissionController";
 
 const promisifiedExec = promisify(exec);
 
@@ -45,13 +46,40 @@ export const postSubmissionMiddleware = async (
     return res.status(400).json({ error: submissionError });
   }
 
-  const { result, solutionError } = await isValidSolution(bytecode, level_id);
+  //If solution is not undefined, it means there's already a submission with the same bytecode and we do not need to run the tests
+  let solution = await getSubmissionByBytecodeAndLevel(bytecode, level_id);
+console.log("SOLUTION FOUND: ", solution)
+  if (solution) {
+    console.log("NOT TESTING")
+    req.submission = {
+      id: undefined,
+      user_id: user_id,
+      user_name: undefined,
+      level_id: level_id,
+      level_name: undefined,
+      bytecode: bytecode,
+      gas: solution.gas,
+      size: solution.size,
+      submitted_at: Date.now(),
+      type: solution.type,
+      optimized_for: undefined,
+    };
+  } else {
+    console.log("TESTING")
+    const { result, solutionError } = await isValidSolution(bytecode, level_id);
 
-  if (!result) {
-    return res.status(400).json(solutionError);
+    if (!result) {
+      return res.status(400).json(solutionError);
+    }
+
+    req.submission = evaluateSolution(
+      result,
+      user_id,
+      level_id,
+      bytecode,
+      type
+    );
   }
-
-  req.submission = evaluateSolution(result, user_id, level_id, bytecode, type);
 
   next();
 };
@@ -88,7 +116,6 @@ const isValidSubmission = (user_id: any, level_id: any, bytecode: any) => {
 
 const isValidSolution = async (bytecode: any, level_id: any) => {
   const test_file = await getTestContractByLevelId(level_id);
-
   if (!test_file) {
     return {
       result: undefined,
