@@ -73,9 +73,10 @@ export const getLevelTotalSolutions = async (id: number) => {
     const cachedData: any = await getCachedData(submissionsCacheKey);
 
     if (cachedData) {
-      return cachedData.filter(
-        (submission: any) => submission.level_id === `${id}`
-      ).length;
+      return JSON.stringify(
+        cachedData.filter((submission: any) => submission.level_id === id)
+          .length / 2
+      );
     } else {
       const solutions = await database.query(SELECT_LEVEL_TOTAL_SOLUTIONS, [
         id,
