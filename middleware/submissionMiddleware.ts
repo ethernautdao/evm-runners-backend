@@ -12,7 +12,7 @@ import {
 } from "../utils/constants";
 import { isValidNumber } from "../utils/shared";
 import { webcrypto } from "crypto";
-import { getSubmissionByBytecode } from "../controller/submissionController";
+import { getSubmissionByBytecodeAndLevel } from "../controller/submissionController";
 
 const promisifiedExec = promisify(exec);
 
@@ -47,8 +47,8 @@ export const postSubmissionMiddleware = async (
   }
 
   //If solution is not undefined, it means there's already a submission with the same bytecode and we do not need to run the tests
-  let solution = await getSubmissionByBytecode(bytecode);
-
+  let solution = await getSubmissionByBytecodeAndLevel(bytecode, level_id);
+  
   if (solution) {
     req.submission = {
       id: undefined,
@@ -60,7 +60,7 @@ export const postSubmissionMiddleware = async (
       gas: solution.gas,
       size: solution.size,
       submitted_at: Date.now(),
-      type: determineSolutionType(type.toLowerCase()),
+      type: solution.type,
       optimized_for: undefined,
     };
   } else {

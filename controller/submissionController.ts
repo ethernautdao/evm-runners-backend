@@ -14,7 +14,7 @@ import {
   SELECT_ALL_SUBMISSIONS_QUERY,
   SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY,
   SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
-  SELECT_SUBMISSION_BY_BYTECODE_QUERY,
+  SELECT_SUBMISSION_BY_BYTECODE_AND_LEVEL_QUERY,
   SELECT_SUBMISSION_BY_ID_QUERY,
   SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
 } from "../utils/queries";
@@ -87,18 +87,23 @@ export const getSubmissionById = async (id: number) => {
   }
 };
 
-export const getSubmissionByBytecode = async (bytecode: string) => {
+export const getSubmissionByBytecodeAndLevel = async (
+  bytecode: string,
+  level: string
+) => {
   try {
     const cachedData: any = await getCachedData(submissionsCacheKey);
 
     if (cachedData) {
       return cachedData.find(
-        (submission: any) => submission.bytecode === bytecode
+        (submission: any) =>
+          submission.bytecode === bytecode &&
+          submission.level_id === Number.parseInt(level)
       );
     } else {
       const submission = await database.query<Submission>(
-        SELECT_SUBMISSION_BY_BYTECODE_QUERY,
-        [bytecode]
+        SELECT_SUBMISSION_BY_BYTECODE_AND_LEVEL_QUERY,
+        [bytecode, level]
       );
 
       return submission.rows[0];
