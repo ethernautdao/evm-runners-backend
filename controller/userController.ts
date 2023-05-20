@@ -17,10 +17,8 @@ export const getUsers = async () => {
 
     //If cache exists, use it
     if (cachedData) {
-      console.log("USER CACHED DATA")
       return cachedData;
     } else {
-      console.log("NO CACHED DATA")
       //Else, get the data from the db and then cache it
       const users = await database.query<User>(SELECT_ALL_USERS_QUERY);
       cache.set(usersCacheKey, JSON.stringify(users.rows));

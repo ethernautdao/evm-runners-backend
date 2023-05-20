@@ -19,10 +19,8 @@ export const getLevels = async () => {
 
     //If cache exists, use it
     if (cachedData) {
-      console.log("LEVEL CACHED DATA")
       return cachedData;
     } else {
-      console.log("NO LEVEL CACHED DATA")
       //Else, get the data from the db and then cache it
       const levels = await database.query<Level>(SELECT_ALL_LEVELS_QUERY);
       cache.set(levelsCacheKey, JSON.stringify(levels.rows));

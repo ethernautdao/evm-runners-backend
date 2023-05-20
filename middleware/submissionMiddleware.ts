@@ -48,9 +48,7 @@ export const postSubmissionMiddleware = async (
 
   //If solution is not undefined, it means there's already a submission with the same bytecode and we do not need to run the tests
   let solution = await getSubmissionByBytecodeAndLevel(bytecode, level_id);
-console.log("SOLUTION FOUND: ", solution)
   if (solution) {
-    console.log("NOT TESTING")
     req.submission = {
       id: undefined,
       user_id: user_id,
@@ -65,7 +63,6 @@ console.log("SOLUTION FOUND: ", solution)
       optimized_for: undefined,
     };
   } else {
-    console.log("TESTING")
     const { result, solutionError } = await isValidSolution(bytecode, level_id);
 
     if (!result) {

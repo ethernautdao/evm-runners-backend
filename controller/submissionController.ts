@@ -27,10 +27,8 @@ export const getSubmissions = async () => {
 
     //If cache exists, use it
     if (cachedData) {
-      console.log("SUB CACHED DATA");
       return cachedData;
     } else {
-      console.log("NO SUB CACHED DATA");
       //Else, get the data from the db and then cache it
       const submissions = await database.query<Submission>(
         SELECT_ALL_SUBMISSIONS_QUERY
@@ -91,18 +89,16 @@ export const getSubmissionById = async (id: number) => {
 
 export const getSubmissionByBytecodeAndLevel = async (
   bytecode: string,
-  level: number
+  level: string
 ) => {
   try {
     const cachedData: any = await getCachedData(submissionsCacheKey);
 
     if (cachedData) {
-      console.log("SUBMISSION CACHED DATA", cachedData);
-      console.log("### LEVEL_ID", level);
-      console.log("### BYTECODE", bytecode);
       return cachedData.find(
         (submission: any) =>
-          submission.bytecode === `${bytecode}` && submission.level_id === level
+          submission.bytecode === bytecode &&
+          submission.level_id === Number.parseInt(level)
       );
     } else {
       const submission = await database.query<Submission>(
@@ -124,12 +120,8 @@ export const getGasLeaderboardByLevel = async (id: number) => {
     );
 
     if (cachedData) {
-      console.log(`${gasLeaderboardsCacheKey}-${id} CACHED DATA`);
-
       return cachedData;
     } else {
-      console.log(`${gasLeaderboardsCacheKey}-${id} NO CACHED DATA`);
-
       const leaderboard = await database.query<Submission>(
         SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY,
         [id]
@@ -153,11 +145,8 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
     );
 
     if (cachedData) {
-      console.log(`${sizeLeaderboardsCacheKey}-${id} CACHED DATA`);
       return cachedData;
     } else {
-      console.log(`${sizeLeaderboardsCacheKey}-${id} NO CACHED DATA`);
-
       const leaderboard = await database.query<Submission>(
         SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
         [id]
