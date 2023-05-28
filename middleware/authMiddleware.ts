@@ -75,7 +75,7 @@ export const checkAuthorizationTokenMatchesUserIdMiddleware = async (
 const checkToken = (header: string) => {
   const token = header?.split(" ") ?? "";
 
-  if (!token[0]?.includes("Bearer") || !isValidString(token[1])) {
+  if (!token[0]?.toLowerCase().includes("bearer") || !isValidString(token[1])) {
     return {
       token: undefined,
       error: "Invalid authorization token: Must be a valid string.",
