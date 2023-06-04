@@ -70,6 +70,13 @@ export default function PinCodeHtml(pin: string) {
           <script>
             function copyToClipboard(text) {
               navigator.clipboard.writeText(text);
+              var button = document.querySelector('button');
+              button.innerText = 'Copied';
+              button.disabled = true;
+              setTimeout(function() {
+                button.innerText = 'Copy to clipboard';
+                button.disabled = false;
+              }, 2000);
             }
           </script>
           <footer>
