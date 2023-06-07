@@ -3,7 +3,7 @@ export interface User {
   pin: string;
   discord_id: number;
   name: string;
-  discriminator: number;
+  discriminator: string;
   code: string;
   access_token: string;
   refresh_token: string;
