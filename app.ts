@@ -4,11 +4,21 @@ import levelsRouter from "./routes/levelRouter";
 import submissionRouter from "./routes/submissionRouter";
 import userRouter from "./routes/userRouter";
 import authRouter from "./routes/authRouter";
+import {
+  checkGetRequestLimit,
+  checkPostRequestLimit,
+} from "./middleware/rateLimiterMiddleware";
 
 const app: Express = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+
+// Apply rate limiter middleware for GET requests
+app.get("*", checkGetRequestLimit);
+
+// Apply rate limiter middleware for POST requests
+app.post("*", checkPostRequestLimit);
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
