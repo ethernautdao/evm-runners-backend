@@ -61,12 +61,10 @@ export const checkAuthorizationTokenMatchesUserIdMiddleware = async (
   let tokenMatches = isTokenMatch(user_id, token!);
 
   if (!tokenMatches) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "The token provided does not match the user_id for this submission.",
-      });
+    return res.status(400).json({
+      error:
+        "The token provided does not match the user_id for this submission.",
+    });
   }
 
   next();
