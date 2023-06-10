@@ -202,15 +202,18 @@ const evaluateSolution = (
 
 //This is an extra precaution to restrict solution types only to these 5 specific strings
 const determineSolutionType = (type: string) => {
-  if (type === "sol") {
-    return "solidity";
+  switch (type.toLowerCase()) {
+    case "sol":
+      return "solidity";
+    case "huff":
+      return type;
+    case "vy":
+      return "vyper";
+    case "bytecode":
+      return type;
+    default:
+      return "unknown";
   }
-
-  if (type === "huff" || type === "vyper" || type === "bytecode") {
-    return type;
-  }
-
-  return "unknown";
 };
 
 const formatError = (error: string) => {
