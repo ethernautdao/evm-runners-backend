@@ -125,7 +125,6 @@ CREATE TABLE evm_runners.users (
     pin text UNIQUE NOT NULL,
     discord_id bigint UNIQUE NOT NULL,
     name character varying(100) NOT NULL,
-	discriminator text NOT NULL,
     code text NOT NULL,
     access_token text NOT NULL,
     refresh_token text NOT NULL,
