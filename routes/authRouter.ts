@@ -51,7 +51,6 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
             discord_id: userInfo.id,
             pin: generatePIN(),
             name: userInfo.username,
-            discriminator: userInfo.discriminator,
             code: code as string,
             access_token: data.access_token,
             refresh_token: data.refresh_token,

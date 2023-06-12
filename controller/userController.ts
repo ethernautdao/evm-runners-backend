@@ -146,7 +146,6 @@ export const insertOrUpdateUser = async (user: User) => {
       user.pin,
       user.discord_id,
       user.name,
-      user.discriminator,
       user.code,
       user.access_token,
       user.refresh_token,
