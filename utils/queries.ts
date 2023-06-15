@@ -43,13 +43,13 @@ export const DELETE_LEVEL_QUERY = "DELETE FROM levels WHERE id = $1";
 
 /* SUBMISSION */
 export const SELECT_ALL_SUBMISSIONS_QUERY =
-  "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id";
+  "SELECT s.*, u.name AS user_name, l.name AS level_name FROM submissions s JOIN users u ON s.user_id = u.id JOIN levels l ON s.level_id = l.id ";
 export const SELECT_SUBMISSION_BY_TOKEN_QUERY =
-  "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id WHERE u.access_token = $1";
+  "SELECT s.*, u.name AS user_name, l.name AS level_name FROM submissions s JOIN users u ON s.user_id = u.id JOIN levels l ON s.level_id = l.id WHERE u.access_token = $1;";
 export const SELECT_SUBMISSION_BY_ID_QUERY =
-  "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id WHERE id = $1";
+  "SELECT s.*, u.name AS user_name, l.name AS level_name FROM submissions s JOIN users u ON s.user_id = u.id JOIN levels l ON s.level_id = l.id WHERE id = $1";
 export const SELECT_SUBMISSION_BY_BYTECODE_AND_LEVEL_QUERY =
-  "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id WHERE bytecode = $1 AND level_id = $2";
+  "SELECT s.*, u.name AS user_name, l.name AS level_name FROM submissions s JOIN users u ON s.user_id = u.id JOIN levels l ON s.level_id = l.id WHERE bytecode = $1 AND level_id = $2";
 export const SELECT_GAS_LEADERBOARD_BY_LEVEL_QUERY = `
     SELECT s.id, s.user_id, s.level_id, s.gas, s.size, s.submitted_at, s.type, s.optimized_for, u.name AS user_name, l.name AS level_name
     FROM submissions s 
