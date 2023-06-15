@@ -1,21 +1,21 @@
 import { NextFunction, Request, Response } from "express";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
-//Daily rate limiter of 600 requests
+//Daily rate limiter of 1000 requests
 const dailyRateLimiter = new RateLimiterMemory({
-  points: 600,
+  points: 1000,
   duration: 24 * 60 * 60,
 });
 
-//Get request hourly rate limiter of 60 requests
+//Get request hourly rate limiter of 100 requests
 const getRateLimiter = new RateLimiterMemory({
-  points: 60,
+  points: 100,
   duration: 60 * 60,
 });
 
-//POST request hourly rate limiter of 10 requests
+//POST request hourly rate limiter of 20 requests
 const postRateLimiter = new RateLimiterMemory({
-  points: 10,
+  points: 20,
   duration: 60 * 60,
 });
 
@@ -35,11 +35,11 @@ export const checkGetRequestLimit = (
         .catch(() => {
           res
             .status(429)
-            .send("Too Many GET Requests: maximum of 60 requests/hour");
+            .send("Too Many GET Requests: maximum of 100 requests/hour");
         });
     })
     .catch(() => {
-      res.status(429).send("Too Many Requests: maximum of 600 requests/day");
+      res.status(429).send("Too Many Requests: maximum of 1000 requests/day");
     });
 };
 
@@ -59,10 +59,10 @@ export const checkPostRequestLimit = (
         .catch(() => {
           res
             .status(429)
-            .send("Too Many POST Requests: maximum of 10 requests/hour.");
+            .send("Too Many POST Requests: maximum of 20 requests/hour.");
         });
     })
     .catch(() => {
-      res.status(429).send("Too Many Requests: maximum of 600 requests/day");
+      res.status(429).send("Too Many Requests: maximum of 1000 requests/day");
     });
 };
