@@ -4,7 +4,7 @@ import {
   getSizeLeaderboardByLevel,
   getSubmissionById,
   getSubmissions,
-  getSubmissionsByTokenAndLevel,
+  getSubmissionsByToken,
   insertOrUpdateSubmission,
 } from "../controller/submissionController";
 import { checkLevelIdMiddleware } from "../middleware/levelMiddleware";
@@ -31,14 +31,12 @@ submissionRouter.get(
 );
 
 submissionRouter.get(
-  "/user/:id?",
+  "/user/",
   checkAuthorizationTokenExistsMiddleware,
-  checkLevelIdMiddleware,
   async (req: Request, res: Response) => {
     res.send(
-      await getSubmissionsByTokenAndLevel(
-        formatAccessToken(req.headers.authorization ?? ""),
-        Number.parseInt(req.params.id)
+      await getSubmissionsByToken(
+        formatAccessToken(req.headers.authorization ?? "")
       )
     );
   }

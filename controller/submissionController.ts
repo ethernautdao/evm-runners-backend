@@ -42,24 +42,20 @@ export const getSubmissions = async () => {
   }
 };
 
-export const getSubmissionsByTokenAndLevel = async (
-  token: string,
-  level: number
-) => {
+export const getSubmissionsByToken = async (token: string) => {
   try {
     const cachedData: any = await getCachedData(submissionsCacheKey);
 
     if (cachedData) {
       const user = await getUserByToken(token);
+
       return cachedData.filter(
-        (submission: any) =>
-          submission.level_id === level &&
-          submission.user_id === Number.parseInt(user.id)
+        (submission: any) => submission.user_id === Number.parseInt(user.id)
       );
     } else {
       const submissions = await database.query<Submission>(
         SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
-        [token, level]
+        [token]
       );
       return submissions.rows;
     }
