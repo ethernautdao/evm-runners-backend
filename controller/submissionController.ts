@@ -16,7 +16,7 @@ import {
   SELECT_SIZE_LEADERBOARD_BY_LEVEL_QUERY,
   SELECT_SUBMISSION_BY_BYTECODE_AND_LEVEL_QUERY,
   SELECT_SUBMISSION_BY_ID_QUERY,
-  SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
+  SELECT_SUBMISSION_BY_TOKEN_QUERY,
 } from "../utils/queries";
 import { getUserByToken } from "./userController";
 
@@ -54,7 +54,7 @@ export const getSubmissionsByToken = async (token: string) => {
       );
     } else {
       const submissions = await database.query<Submission>(
-        SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY,
+        SELECT_SUBMISSION_BY_TOKEN_QUERY,
         [token]
       );
       return submissions.rows;

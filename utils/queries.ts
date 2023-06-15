@@ -44,7 +44,7 @@ export const DELETE_LEVEL_QUERY = "DELETE FROM levels WHERE id = $1";
 /* SUBMISSION */
 export const SELECT_ALL_SUBMISSIONS_QUERY =
   "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id";
-export const SELECT_SUBMISSION_BY_TOKEN_AND_LEVEL_QUERY =
+export const SELECT_SUBMISSION_BY_TOKEN_QUERY =
   "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id WHERE u.access_token = $1";
 export const SELECT_SUBMISSION_BY_ID_QUERY =
   "SELECT s.*, u.name AS user_name FROM submissions s JOIN users u ON s.user_id = u.id WHERE id = $1";
