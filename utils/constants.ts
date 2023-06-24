@@ -1,9 +1,13 @@
+/* SETUP */
+export const SETUP_URL =
+  "https://raw.githubusercontent.com/ethernautdao/evm-runners-cli/main/install.sh";
+
 /* CACHE KEYS */
-export const levelsCacheKey = "levels";
-export const usersCacheKey = "users";
-export const submissionsCacheKey = "submissions";
-export const gasLeaderboardsCacheKey = "gas-leaderboard";
-export const sizeLeaderboardsCacheKey = "size-leaderboard";
+export const LEVELS_CACHE_KEY = "levels";
+export const USERS_CACHE_KEY = "users";
+export const SUBMISSIONS_CACHE_KEY = "submissions";
+export const GAS_LEADERBOARDS_CACHE_KEY = "gas-leaderboard";
+export const SIZE_LEADERBOARDS_CACHE_KEY = "size-leaderboard";
 
 /* DISCORD AUTH */
 export const REDIRECT_CALLBACK = "http://localhost:1337/auth/discord/";

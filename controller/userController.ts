@@ -1,7 +1,7 @@
 import { cache, getCachedData } from "../cache";
 import { database } from "../db";
 import { User } from "../model/user";
-import { usersCacheKey } from "../utils/constants";
+import { USERS_CACHE_KEY } from "../utils/constants";
 import {
   INSERT_OR_UPDATE_USER_QUERY,
   SELECT_ALL_USERS_QUERY,
@@ -13,7 +13,7 @@ import {
 export const getUsers = async () => {
   try {
     //Get cached data
-    const cachedData = await getCachedData(usersCacheKey);
+    const cachedData = await getCachedData(USERS_CACHE_KEY);
 
     //If cache exists, use it
     if (cachedData) {
@@ -21,7 +21,7 @@ export const getUsers = async () => {
     } else {
       //Else, get the data from the db and then cache it
       const users = await database.query<User>(SELECT_ALL_USERS_QUERY);
-      cache.set(usersCacheKey, JSON.stringify(users.rows));
+      cache.set(USERS_CACHE_KEY, JSON.stringify(users.rows));
       return users.rows;
     }
   } catch (_) {
@@ -31,7 +31,7 @@ export const getUsers = async () => {
 
 export const getUserByToken = async (token: string) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((user: any) => user.access_token === token);
@@ -48,7 +48,7 @@ export const getUserByToken = async (token: string) => {
 
 export const getUserById = async (id: number) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((user: any) => user.id === `${id}`);
@@ -63,7 +63,7 @@ export const getUserById = async (id: number) => {
 
 export const getUserByPin = async (pin: string) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((user: any) => user.pin === pin);
@@ -78,7 +78,7 @@ export const getUserByPin = async (pin: string) => {
 
 export const doesTokenExist = async (token: string) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
     let userId: number | undefined;
 
     if (cachedData) {
@@ -100,7 +100,7 @@ export const doesTokenExist = async (token: string) => {
 
 export const userIsAdmin = async (token: string) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((user: any) => user.access_token === token).admin;
@@ -122,7 +122,7 @@ export const userIsAdmin = async (token: string) => {
 
 export const isTokenMatch = async (user_id: Number, token: string) => {
   try {
-    const cachedData: any = await getCachedData(usersCacheKey);
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
 
     if (cachedData) {
       return (
@@ -154,7 +154,7 @@ export const insertOrUpdateUser = async (user: User) => {
     ]);
 
     //Delete cache and initialize it again
-    cache.del(usersCacheKey);
+    cache.del(USERS_CACHE_KEY);
     await getUsers();
 
     return inserted.rows[0];

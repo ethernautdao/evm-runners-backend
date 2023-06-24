@@ -1,7 +1,7 @@
 import { cache, getCachedData } from "../cache";
 import { database } from "../db";
 import { Level } from "../model/level";
-import { levelsCacheKey, submissionsCacheKey } from "../utils/constants";
+import { LEVELS_CACHE_KEY, SUBMISSIONS_CACHE_KEY } from "../utils/constants";
 import {
   DELETE_LEVEL_QUERY,
   INSERT_LEVEL_QUERY,
@@ -15,7 +15,7 @@ import {
 export const getLevels = async () => {
   try {
     //Get cached data
-    const cachedData = await getCachedData(levelsCacheKey);
+    const cachedData = await getCachedData(LEVELS_CACHE_KEY);
 
     //If cache exists, use it
     if (cachedData) {
@@ -23,7 +23,7 @@ export const getLevels = async () => {
     } else {
       //Else, get the data from the db and then cache it
       const levels = await database.query<Level>(SELECT_ALL_LEVELS_QUERY);
-      cache.set(levelsCacheKey, JSON.stringify(levels.rows));
+      cache.set(LEVELS_CACHE_KEY, JSON.stringify(levels.rows));
       return levels.rows;
     }
   } catch (_) {
@@ -33,7 +33,7 @@ export const getLevels = async () => {
 
 export const getLevelById = async (id: number) => {
   try {
-    const cachedData: any = await getCachedData(levelsCacheKey);
+    const cachedData: any = await getCachedData(LEVELS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((level: any) => level.id === `${id}`);
@@ -48,7 +48,7 @@ export const getLevelById = async (id: number) => {
 
 export const getTestContractByLevelId = async (id: number) => {
   try {
-    const cachedData: any = await getCachedData(levelsCacheKey);
+    const cachedData: any = await getCachedData(LEVELS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((level: any) => level.id === `${id}`)
@@ -70,7 +70,7 @@ export const getTestContractByLevelId = async (id: number) => {
 
 export const getLevelTotalSolutions = async (id: number) => {
   try {
-    const cachedData: any = await getCachedData(submissionsCacheKey);
+    const cachedData: any = await getCachedData(SUBMISSIONS_CACHE_KEY);
 
     if (cachedData) {
       return JSON.stringify(
@@ -108,7 +108,7 @@ export const insertOrUpdateLevel = async (level: Level) => {
     }
 
     //Delete cache and initialize it again
-    cache.del(levelsCacheKey);
+    cache.del(LEVELS_CACHE_KEY);
     await getLevels();
 
     return inserted.rows[0];
@@ -125,7 +125,7 @@ export const deleteLevel = async (id: number) => {
 
     if (level.rowCount > 0) {
       //Delete cache and initialize it again
-      cache.del(levelsCacheKey);
+      cache.del(LEVELS_CACHE_KEY);
       await getLevels();
 
       return "Level deleted successfully.";
