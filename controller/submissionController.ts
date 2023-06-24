@@ -5,9 +5,9 @@ import {
   Submission,
 } from "../model/submission";
 import {
-  gasLeaderboardsCacheKey,
-  sizeLeaderboardsCacheKey,
-  submissionsCacheKey,
+  GAS_LEADERBOARDS_CACHE_KEY,
+  SIZE_LEADERBOARDS_CACHE_KEY,
+  SUBMISSIONS_CACHE_KEY,
 } from "../utils/constants";
 import {
   INSERT_OR_UPDATE_SUBMISSION_QUERY,
@@ -23,7 +23,7 @@ import { getUserByToken } from "./userController";
 export const getSubmissions = async () => {
   try {
     //Get cached data
-    const cachedData = await getCachedData(submissionsCacheKey);
+    const cachedData = await getCachedData(SUBMISSIONS_CACHE_KEY);
 
     //If cache exists, use it
     if (cachedData) {
@@ -34,7 +34,7 @@ export const getSubmissions = async () => {
         SELECT_ALL_SUBMISSIONS_QUERY
       );
 
-      cache.set(submissionsCacheKey, JSON.stringify(submissions.rows));
+      cache.set(SUBMISSIONS_CACHE_KEY, JSON.stringify(submissions.rows));
       return submissions.rows;
     }
   } catch (_) {
@@ -44,7 +44,7 @@ export const getSubmissions = async () => {
 
 export const getSubmissionsByToken = async (token: string) => {
   try {
-    const cachedData: any = await getCachedData(submissionsCacheKey);
+    const cachedData: any = await getCachedData(SUBMISSIONS_CACHE_KEY);
 
     if (cachedData) {
       const user = await getUserByToken(token);
@@ -66,7 +66,7 @@ export const getSubmissionsByToken = async (token: string) => {
 
 export const getSubmissionById = async (id: number) => {
   try {
-    const cachedData: any = await getCachedData(submissionsCacheKey);
+    const cachedData: any = await getCachedData(SUBMISSIONS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find((submission: any) => submission.id === `${id}`);
@@ -88,7 +88,7 @@ export const getSubmissionByBytecodeAndLevel = async (
   level: string
 ) => {
   try {
-    const cachedData: any = await getCachedData(submissionsCacheKey);
+    const cachedData: any = await getCachedData(SUBMISSIONS_CACHE_KEY);
 
     if (cachedData) {
       return cachedData.find(
@@ -112,7 +112,7 @@ export const getSubmissionByBytecodeAndLevel = async (
 export const getGasLeaderboardByLevel = async (id: number) => {
   try {
     const cachedData: any = await getCachedData(
-      `${gasLeaderboardsCacheKey}-${id}`
+      `${GAS_LEADERBOARDS_CACHE_KEY}-${id}`
     );
 
     if (cachedData) {
@@ -124,7 +124,7 @@ export const getGasLeaderboardByLevel = async (id: number) => {
       );
 
       cache.set(
-        `${gasLeaderboardsCacheKey}-${id}`,
+        `${GAS_LEADERBOARDS_CACHE_KEY}-${id}`,
         JSON.stringify(leaderboard.rows)
       );
       return leaderboard.rows;
@@ -137,7 +137,7 @@ export const getGasLeaderboardByLevel = async (id: number) => {
 export const getSizeLeaderboardByLevel = async (id: number) => {
   try {
     const cachedData: any = await getCachedData(
-      `${sizeLeaderboardsCacheKey}-${id}`
+      `${SIZE_LEADERBOARDS_CACHE_KEY}-${id}`
     );
 
     if (cachedData) {
@@ -149,7 +149,7 @@ export const getSizeLeaderboardByLevel = async (id: number) => {
       );
 
       cache.set(
-        `${sizeLeaderboardsCacheKey}-${id}`,
+        `${SIZE_LEADERBOARDS_CACHE_KEY}-${id}`,
         JSON.stringify(leaderboard.rows)
       );
       return leaderboard.rows;
@@ -175,9 +175,9 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
     );
 
     //Delete cache and initialize it again. The leaderboard functions should be called with some regularity so there's no need to initialize here.
-    cache.del(submissionsCacheKey);
-    cache.del(`${gasLeaderboardsCacheKey}-${submission.level_id}`);
-    cache.del(`${sizeLeaderboardsCacheKey}-${submission.level_id}`);
+    cache.del(SUBMISSIONS_CACHE_KEY);
+    cache.del(`${GAS_LEADERBOARDS_CACHE_KEY}-${submission.level_id}`);
+    cache.del(`${SIZE_LEADERBOARDS_CACHE_KEY}-${submission.level_id}`);
     await getSubmissions();
 
     return inserted.rows;
