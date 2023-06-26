@@ -1,5 +1,5 @@
 # Use the latest foundry image
-FROM ghcr.io/foundry-rs/foundry:nightly-7398b65e831f2339d1d0a0bb05ade799e4f9d01e as foundry-image
+FROM ghcr.io/foundry-rs/foundry:latest as foundry-image
 
 FROM node:16
 
