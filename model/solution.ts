@@ -41,7 +41,7 @@ export const convertToSolutionFeedback = (output: any) => {
     Object.entries(value["test_results"]).forEach(([k, v]: any) => {
       if (k.includes("fuzz")) {
         solutionFeedback.fuzz = {
-          success: v.success,
+          success: v.status === "Success",
           reason: v.reason,
           decoded_logs: v.decoded_logs,
         };
@@ -50,7 +50,7 @@ export const convertToSolutionFeedback = (output: any) => {
 
       if (k.includes("sanity")) {
         solutionFeedback.sanity = {
-          success: v.success,
+          success: v.status === "Success",
           reason: v.reason,
           decoded_logs: v.decoded_logs,
         };
@@ -59,7 +59,7 @@ export const convertToSolutionFeedback = (output: any) => {
 
       if (k.includes("gas")) {
         solutionFeedback.gas = {
-          success: v.success,
+          success: v.status === "Success",
           reason: v.reason,
           decoded_logs: [Number(v.kind.Fuzz.mean_gas)],
         };
@@ -68,7 +68,7 @@ export const convertToSolutionFeedback = (output: any) => {
 
       if (k.includes("size")) {
         solutionFeedback.size = {
-          success: v.success,
+          success: v.status === "Success",
           reason: v.reason,
           decoded_logs: [Number.parseInt(v.decoded_logs[0].split(":")[1])],
         };
