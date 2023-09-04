@@ -3,6 +3,7 @@ import { database } from "../db";
 import { User } from "../model/user";
 import { USERS_CACHE_KEY } from "../utils/constants";
 import {
+  ADD_WALLET_ADDRESS_QUERY,
   INSERT_OR_UPDATE_USER_QUERY,
   SELECT_ALL_USERS_QUERY,
   SELECT_USER_BY_ID_QUERY,
@@ -150,6 +151,7 @@ export const insertOrUpdateUser = async (user: User) => {
       user.access_token,
       user.refresh_token,
       user.expires_in / 1000,
+      user.wallet_address,
       user.admin,
     ]);
 
@@ -158,6 +160,29 @@ export const insertOrUpdateUser = async (user: User) => {
     await getUsers();
 
     return inserted.rows[0];
+  } catch (err: any) {
+    return err.detail
+      ? err.detail
+      : "Unexpected error occured, please try again.";
+  }
+};
+
+export const addWalletAddress = async (address: string, token: string) => {
+  try {
+    const updated = await database.query<User>(ADD_WALLET_ADDRESS_QUERY, [
+      address,
+      token,
+    ]);
+
+    //Delete cache and initialize it again
+    cache.del(USERS_CACHE_KEY);
+    await getUsers();
+
+    if (updated.rowCount > 0) {
+      return "Address added successfully.";
+    }
+
+    return "Unable to add address";
   } catch (err: any) {
     return err.detail
       ? err.detail

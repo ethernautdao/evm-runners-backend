@@ -55,6 +55,7 @@ authRouter.get("/discord", async (req: Request, res: Response) => {
             access_token: data.access_token,
             refresh_token: data.refresh_token,
             expires_in: formattedTimestamp,
+            wallet_address: "",
             admin: false,
           };
 

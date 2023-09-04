@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import {
+  addWalletAddress,
   getUserById,
   getUserByPin,
   getUsers,
@@ -7,11 +8,13 @@ import {
 import {
   checkUserIdMiddleware,
   checkUserPinMiddleware,
+  checkWalletAddressMiddleware,
 } from "../middleware/userMiddleware";
 import {
   checkAuthorizationTokenExistsMiddleware,
   checkIsAdminMiddleware,
 } from "../middleware/authMiddleware";
+import { formatAccessToken } from "../utils/shared";
 
 const userRouter = express.Router();
 
@@ -39,6 +42,20 @@ userRouter.get(
   checkUserPinMiddleware,
   async (req: Request, res: Response) => {
     res.send(await getUserByPin(req.params.pin));
+  }
+);
+
+userRouter.post(
+  "/wallet",
+  checkAuthorizationTokenExistsMiddleware,
+  checkWalletAddressMiddleware,
+  async (req: Request, res: Response) => {
+    res.send(
+      await addWalletAddress(
+        req.body.address,
+        formatAccessToken(req.headers.authorization ?? "")
+      )
+    );
   }
 );
 

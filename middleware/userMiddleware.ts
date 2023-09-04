@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { isValidNumber, isValidString } from "../utils/shared";
+import {
+  isValidNumber,
+  isValidString,
+  isValidWalletAddress,
+} from "../utils/shared";
 
 export const checkUserIdMiddleware = (
   req: Request,
@@ -24,6 +28,20 @@ export const checkUserPinMiddleware = (
     return res
       .status(400)
       .json({ error: "Invalid pin: Must be a valid string." });
+  }
+
+  next();
+};
+
+export const checkWalletAddressMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!isValidWalletAddress(req.body.address)) {
+    return res
+      .status(400)
+      .json({ error: "Invalid address: Must be a well formed address." });
   }
 
   next();
