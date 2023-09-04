@@ -129,6 +129,7 @@ CREATE TABLE evm_runners.users (
     access_token text NOT NULL,
     refresh_token text NOT NULL,
     expires_in timestamp NOT NULL,
+    wallet_address character(42) UNIQUE,
     admin boolean DEFAULT false NOT NULL
 );
 
