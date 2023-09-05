@@ -15,4 +15,4 @@ export const formatAccessToken = (header: string) => {
 
 export const isValidWalletAddress = (address: string) => {
   return ETH_ADDRESS_REGEX.test(address);
-}
+};
