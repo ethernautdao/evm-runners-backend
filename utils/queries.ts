@@ -5,8 +5,8 @@ export const SELECT_USER_BY_TOKEN_QUERY =
   "SELECT * FROM users WHERE access_token = $1";
 export const SELECT_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = $1";
 export const INSERT_OR_UPDATE_USER_QUERY = `
-    INSERT INTO users (pin, discord_id, name, code, access_token, refresh_token, expires_in, admin)
-    VALUES($1, $2, $3, $4, $5, $6, to_timestamp($7), $8) 
+    INSERT INTO users (pin, discord_id, name, code, access_token, refresh_token, expires_in, wallet_address, admin)
+    VALUES($1, $2, $3, $4, $5, $6, to_timestamp($7), $8, $9) 
     ON CONFLICT (discord_id)
     DO UPDATE SET
         pin = EXCLUDED.pin,
@@ -14,10 +14,12 @@ export const INSERT_OR_UPDATE_USER_QUERY = `
         code = EXCLUDED.code, 
         access_token = EXCLUDED.access_token, 
         refresh_token = EXCLUDED.refresh_token, 
-        expires_in = EXCLUDED.expires_in, 
+        expires_in = EXCLUDED.expires_in,
+        wallet_address = EXCLUDED.wallet_address, 
         admin = EXCLUDED.admin
     RETURNING *;
 `;
+export const ADD_WALLET_ADDRESS_QUERY = "UPDATE users SET wallet_address = $1 WHERE access_token = $2";
 
 /* LEVELS */
 export const SELECT_ALL_LEVELS_QUERY = "SELECT * FROM levels";

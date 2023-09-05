@@ -21,3 +21,6 @@ export const FORGE_TEST_COMMAND =
   "forge test --silent --json --block-prevrandao $BLOCK_PREV_RANDAO --match-contract";
 export const MIN_BLOCK_NUMBER = 17273644;
 export const MIN_BLOCK_DIFFICULTY = 5.8750003716598352816469e22;
+
+/* ADDRESS REGEX */
+export const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
