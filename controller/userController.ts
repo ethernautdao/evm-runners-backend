@@ -9,6 +9,7 @@ import {
   SELECT_USER_BY_ID_QUERY,
   SELECT_USER_BY_PIN_QUERY,
   SELECT_USER_BY_TOKEN_QUERY,
+  SELECT_USER_BY_WALLET_ADDRESS_QUERY
 } from "../utils/queries";
 
 export const getUsers = async () => {
@@ -70,6 +71,21 @@ export const getUserByPin = async (pin: string) => {
       return cachedData.find((user: any) => user.pin === pin);
     } else {
       const user = await database.query<User>(SELECT_USER_BY_PIN_QUERY, [pin]);
+      return user.rows[0];
+    }
+  } catch (_) {
+    return `An error occurred getting the user.`;
+  }
+};
+
+export const getUserByWalletAddress = async (address: string) => {
+  try {
+    const cachedData: any = await getCachedData(USERS_CACHE_KEY);
+
+    if (cachedData) {
+      return cachedData.find((user: any) => user.wallet_address === address);
+    } else {
+      const user = await database.query<User>(SELECT_USER_BY_WALLET_ADDRESS_QUERY, [address]);
       return user.rows[0];
     }
   } catch (_) {

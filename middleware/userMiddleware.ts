@@ -38,7 +38,7 @@ export const checkWalletAddressMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  if (!isValidWalletAddress(req.body.address)) {
+  if (!isValidWalletAddress(req.body.address ?? req.params.address)) {
     return res
       .status(400)
       .json({ error: "Invalid address: Must be a well formed address." });

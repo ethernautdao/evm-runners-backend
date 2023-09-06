@@ -4,6 +4,7 @@ export const SELECT_USER_BY_PIN_QUERY = "SELECT * FROM users WHERE pin = $1";
 export const SELECT_USER_BY_TOKEN_QUERY =
   "SELECT * FROM users WHERE access_token = $1";
 export const SELECT_USER_BY_ID_QUERY = "SELECT * FROM users WHERE id = $1";
+export const SELECT_USER_BY_WALLET_ADDRESS_QUERY = "SELECT * FROM users WHERE wallet_address = $1";
 export const INSERT_OR_UPDATE_USER_QUERY = `
     INSERT INTO users (pin, discord_id, name, code, access_token, refresh_token, expires_in, wallet_address, admin)
     VALUES($1, $2, $3, $4, $5, $6, to_timestamp($7), $8, $9) 

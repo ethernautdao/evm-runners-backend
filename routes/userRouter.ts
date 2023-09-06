@@ -3,6 +3,7 @@ import {
   addWalletAddress,
   getUserById,
   getUserByPin,
+  getUserByWalletAddress,
   getUsers,
 } from "../controller/userController";
 import {
@@ -42,6 +43,16 @@ userRouter.get(
   checkUserPinMiddleware,
   async (req: Request, res: Response) => {
     res.send(await getUserByPin(req.params.pin));
+  }
+);
+
+userRouter.get(
+  "/wallet/:address?",
+  checkAuthorizationTokenExistsMiddleware,
+  checkIsAdminMiddleware,
+  checkWalletAddressMiddleware,
+  async (req: Request, res: Response) => {
+    res.send(await getUserByWalletAddress(req.params.address));
   }
 );
 
