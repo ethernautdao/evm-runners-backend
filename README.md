@@ -61,6 +61,12 @@ There are three types of endpoints:
     curl -H "Authorization: Bearer {token}" http://localhost:1337/users/1
     ```
 
+    - GET BY WALLET ADDRESS (ADMIN)
+
+    ```
+    curl -H "Authorization: Bearer {token}" http://localhost:1337/users/wallet/0x...
+    ```
+
     - ADD WALLET ADDRESS (AUTH)
 
     Associate an OP mainnet address with the account corresponding to the `token`.
