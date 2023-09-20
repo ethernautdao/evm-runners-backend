@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 
@@ -45,11 +45,13 @@ contract FibHashTestBase is Test {
         fibhash.fibhash(x, k);
     }
 
-    function test_s01e02_size() public {
+    function test_s01e02_size() public view {
         console2.log("Contract size:", address(fibhash).code.length);
     }
 
     function _fibhash(uint256 x, uint8 k) internal pure returns (uint256) {
+        // a is the fibonacci constant for 256-bit numbers
+        // a = floor(2^bits / phi), where phi = (1 + sqrt(5))/2 = 1.618033 ... (golden ratio)
         uint256 a = 71563446777022297856526126342750658392501306254664949883333486863006233104021;
 
         uint256 product;

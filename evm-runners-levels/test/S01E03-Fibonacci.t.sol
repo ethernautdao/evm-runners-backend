@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 
@@ -32,14 +32,16 @@ contract FibonacciTestBase is Test {
         assertEq(fibonacci.fibonacci(20), 6765);
     }
 
+    /// forge-config: default.fuzz.runs = 128
     function test_s01e03_fuzz(uint256 n) public {
         n = bound(n, 0, 20_000);
 
         assertEq(_fibonacci(n), fibonacci.fibonacci(n));
     }
 
+    /// forge-config: default.fuzz.runs = 128
     function test_s01e03_gas(uint256 n) public view {
-        n = bound(n, 10_000, 12_000);
+        n = bound(n, 10_000, 11_000);
 
         fibonacci.fibonacci(n);
     }
@@ -61,7 +63,9 @@ contract FibonacciTestBase is Test {
             uint256 c;
 
             for (uint256 i = 2; i <= n; i++) {
-                c = addmod(a, b, type(uint256).max);
+                unchecked {
+                    c = a + (b % type(uint256).max);
+                }
                 a = b;
                 b = c;
             }

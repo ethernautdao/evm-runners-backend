@@ -41,7 +41,9 @@ contract ArraySortTestBase is Test {
 
         uint256[] memory arr = new uint256[](length);
         for (uint256 i = 0; i < length; i++) {
-            arr[i] = uint256(keccak256(abi.encodePacked(block.timestamp, i))) % 2 ** 16;
+            arr[i] =
+                uint256(keccak256(abi.encodePacked(block.timestamp, i))) %
+                2 ** 16;
         }
 
         // copy array to avoid mutating it
@@ -58,7 +60,9 @@ contract ArraySortTestBase is Test {
 
         uint256[] memory arr = new uint256[](length);
         for (uint256 i = 0; i < length; i++) {
-            arr[i] = uint256(keccak256(abi.encodePacked(block.timestamp, i))) % 2 ** 16;
+            arr[i] =
+                uint256(keccak256(abi.encodePacked(block.timestamp, i))) %
+                2 ** 16;
         }
 
         arraySort.arraySort(arr);
@@ -69,7 +73,9 @@ contract ArraySortTestBase is Test {
         assertLt(address(arraySort).code.length, 10000, "!codesize");
     }
 
-    function _sort(uint256[] memory arr) internal pure returns (uint256[] memory) {
+    function _sort(
+        uint256[] memory arr
+    ) internal pure returns (uint256[] memory) {
         uint256 n = arr.length;
         bool swapped;
 
