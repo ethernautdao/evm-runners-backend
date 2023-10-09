@@ -210,7 +210,7 @@ const determineSolutionType = (type: string) => {
     case "vy":
       return "vyper";
     case "yul":
-      return "yul";
+      return type;
     case "bytecode":
       return type;
     default:
