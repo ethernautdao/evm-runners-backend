@@ -1,5 +1,6 @@
 import { cache, getCachedData } from "../cache";
 import { database } from "../db";
+import { storeSubmissionOnChain } from "../ethereumClient";
 import {
   InsertOrUpdateSubmissionResult,
   Submission,
@@ -173,6 +174,8 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
         submission.type,
       ]
     );
+
+    storeSubmissionOnChain(submission);
 
     //Delete cache and initialize it again. The leaderboard functions should be called with some regularity so there's no need to initialize here.
     cache.del(SUBMISSIONS_CACHE_KEY);

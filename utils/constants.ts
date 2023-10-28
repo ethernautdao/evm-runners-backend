@@ -25,3 +25,74 @@ export const MIN_BLOCK_DIFFICULTY = 5.8750003716598352816469e22;
 /* ADDRESS REGEX */
 export const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
 
+/* ETHEREUM */
+export const CONTRACT_ABI = [
+  {
+    inputs: [{ internalType: "address", name: "userAddress", type: "address" }],
+    name: "getSubmissionsForUser",
+    outputs: [
+      {
+        components: [
+          { internalType: "uint256", name: "id", type: "uint256" },
+          { internalType: "uint256", name: "level_id", type: "uint256" },
+          { internalType: "string", name: "level_name", type: "string" },
+          { internalType: "uint256", name: "user_id", type: "uint256" },
+          { internalType: "string", name: "user_name", type: "string" },
+          { internalType: "string", name: "bytecode", type: "string" },
+          { internalType: "uint256", name: "gas", type: "uint256" },
+          { internalType: "uint256", name: "size", type: "uint256" },
+          { internalType: "uint256", name: "submitted_at", type: "uint256" },
+          { internalType: "string", name: "solutionType", type: "string" },
+          { internalType: "string", name: "optimized_for", type: "string" },
+        ],
+        internalType: "struct SubmissionContract.Submission[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "uint256", name: "", type: "uint256" },
+    ],
+    name: "submissionsToUser",
+    outputs: [
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "level_id", type: "uint256" },
+      { internalType: "string", name: "level_name", type: "string" },
+      { internalType: "uint256", name: "user_id", type: "uint256" },
+      { internalType: "string", name: "user_name", type: "string" },
+      { internalType: "string", name: "bytecode", type: "string" },
+      { internalType: "uint256", name: "gas", type: "uint256" },
+      { internalType: "uint256", name: "size", type: "uint256" },
+      { internalType: "uint256", name: "submitted_at", type: "uint256" },
+      { internalType: "string", name: "solutionType", type: "string" },
+      { internalType: "string", name: "optimized_for", type: "string" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "user", type: "address" },
+      { internalType: "uint256", name: "id", type: "uint256" },
+      { internalType: "uint256", name: "level_id", type: "uint256" },
+      { internalType: "string", name: "level_name", type: "string" },
+      { internalType: "uint256", name: "user_id", type: "uint256" },
+      { internalType: "string", name: "user_name", type: "string" },
+      { internalType: "string", name: "bytecode", type: "string" },
+      { internalType: "uint256", name: "gas", type: "uint256" },
+      { internalType: "uint256", name: "size", type: "uint256" },
+      { internalType: "uint256", name: "submitted_at", type: "uint256" },
+      { internalType: "string", name: "type_", type: "string" },
+      { internalType: "string", name: "optimized_for", type: "string" },
+    ],
+    name: "submitSubmission",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];

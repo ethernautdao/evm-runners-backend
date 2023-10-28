@@ -25,10 +25,10 @@ export const checkGetRequestLimit = (
   next: NextFunction
 ) => {
   dailyRateLimiter
-    .consume(req.ip)
+    .consume(req?.ip ?? "")
     .then(() => {
       getRateLimiter
-        .consume(req.ip)
+        .consume(req?.ip ?? "")
         .then(() => {
           next();
         })
@@ -49,10 +49,10 @@ export const checkPostRequestLimit = (
   next: NextFunction
 ) => {
   dailyRateLimiter
-    .consume(req.ip)
+    .consume(req?.ip ?? "")
     .then(() => {
       postRateLimiter
-        .consume(req.ip)
+        .consume(req?.ip ?? "")
         .then(() => {
           next();
         })
