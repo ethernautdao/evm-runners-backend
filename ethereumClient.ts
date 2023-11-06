@@ -69,7 +69,7 @@ const storeSubmissionOnChain = async (
       ],
     });
 
-    const tx = await walletClient.writeContract(request);
+    await walletClient.writeContract(request);
   }
 };
 
