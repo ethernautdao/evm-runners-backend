@@ -1,7 +1,7 @@
 # Use the latest foundry image
 FROM ghcr.io/foundry-rs/foundry:latest as foundry-image
 
-FROM node:16
+FROM node:18
 
 COPY --from=foundry-image /usr/local/bin/forge /usr/local/bin/forge
 
