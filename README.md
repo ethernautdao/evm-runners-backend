@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node.js v16.16.0
+- Node.js v18.16.1
 - NPM v8.11.0
 - postgresql
 

@@ -18,7 +18,7 @@ import { getLevelById } from "./controller/levelController";
 let ethereumClient: PublicClient;
 let account: PrivateKeyAccount;
 let walletClient: WalletClient;
-const transport = http("https://sepolia.infura.io/v3/");
+const transport = http(process.env.API_URL);
 
 const connect = async () => {
   try {
@@ -46,11 +46,8 @@ const storeSubmissionOnChain = async (
 ) => {
   const user = await getUserById(user_id);
   const level = await getLevelById(level_id);
-  console.log("## USER WALLET: ", user);
-  console.log("## LEVEL: ", level);
 
-  submissions.forEach(async (s) => {
-    console.log("## S: ", s);
+  for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
       address: process.env.CONTRACT_ADDRESS as `0x${string}`,
@@ -71,11 +68,9 @@ const storeSubmissionOnChain = async (
         s?.optimized_for,
       ],
     });
-    console.log("## request: ", request);
 
     const tx = await walletClient.writeContract(request);
-    console.log("## TX: ", tx);
-  });
+  }
 };
 
 export { storeSubmissionOnChain };
