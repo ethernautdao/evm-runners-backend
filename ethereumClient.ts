@@ -31,7 +31,7 @@ const connect = async () => {
       transport,
     });
   } catch (error) {
-    console.log(error);
+    console.log("## ETHEREUM CLIENT CONNECT ERROR: ", error);
   }
 };
 
@@ -67,7 +67,7 @@ const storeSubmissionOnChain = async (
       ],
     });
 
-    const tx = await walletClient.writeContract(request);
+    await walletClient.writeContract(request);
   }
 };
 
