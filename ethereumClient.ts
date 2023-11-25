@@ -2,11 +2,9 @@ import {
   WalletClient,
   createWalletClient,
   createPublicClient,
-  Abi,
   http,
   PrivateKeyAccount,
   PublicClient,
-  toHex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
@@ -14,6 +12,19 @@ import { CONTRACT_ABI } from "./utils/constants";
 import { Submission } from "./model/submission";
 import { getUserById } from "./controller/userController";
 import { getLevelById } from "./controller/levelController";
+
+enum SubmissionTypeConverter {
+  "solidity" = 0,
+  "yul" = 1,
+  "vyper" = 2,
+  "huff" = 3,
+  "bytecode" = 4,
+}
+
+enum SubmissionOptimizedForConverter {
+  "gas" = 0,
+  "size" = 1,
+}
 
 let ethereumClient: PublicClient;
 let account: PrivateKeyAccount;
@@ -33,7 +44,7 @@ const connect = async () => {
       transport,
     });
   } catch (error) {
-    console.log(error);
+    console.log("## ETHEREUM CLIENT CONNECT ERROR: ", error);
   }
 };
 
@@ -46,7 +57,6 @@ const storeSubmissionOnChain = async (
 ) => {
   const user = await getUserById(user_id);
   const level = await getLevelById(level_id);
-
   for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
@@ -64,8 +74,12 @@ const storeSubmissionOnChain = async (
         s?.gas,
         s?.size,
         Date.parse(s?.submitted_at.toString()),
-        s?.type,
-        s?.optimized_for,
+        SubmissionTypeConverter[
+          s?.type as keyof typeof SubmissionTypeConverter
+        ], //just to avoid warnings
+        SubmissionOptimizedForConverter[
+          s?.optimized_for as keyof typeof SubmissionOptimizedForConverter
+        ], //just to avoid warnings
       ],
     });
 
