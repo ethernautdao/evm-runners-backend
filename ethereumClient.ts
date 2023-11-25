@@ -13,6 +13,19 @@ import { Submission } from "./model/submission";
 import { getUserById } from "./controller/userController";
 import { getLevelById } from "./controller/levelController";
 
+enum SubmissionTypeConverter {
+  "solidity" = 0,
+  "yul" = 1,
+  "vyper" = 2,
+  "huff" = 3,
+  "bytecode" = 4,
+}
+
+enum SubmissionOptimizedForConverter {
+  "gas" = 0,
+  "size" = 1,
+}
+
 let ethereumClient: PublicClient;
 let account: PrivateKeyAccount;
 let walletClient: WalletClient;
@@ -44,7 +57,6 @@ const storeSubmissionOnChain = async (
 ) => {
   const user = await getUserById(user_id);
   const level = await getLevelById(level_id);
-
   for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
@@ -62,8 +74,12 @@ const storeSubmissionOnChain = async (
         s?.gas,
         s?.size,
         Date.parse(s?.submitted_at.toString()),
-        s?.type,
-        s?.optimized_for,
+        SubmissionTypeConverter[
+          s?.type as keyof typeof SubmissionTypeConverter
+        ], //just to avoid warnings
+        SubmissionOptimizedForConverter[
+          s?.optimized_for as keyof typeof SubmissionOptimizedForConverter
+        ], //just to avoid warnings
       ],
     });
 
