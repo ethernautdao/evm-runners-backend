@@ -52,34 +52,33 @@ connect();
 
 const storeSubmissionOnChain = async (
   user_id: number,
-  level_id: number,
   submissions: Submission[]
 ) => {
   const user = await getUserById(user_id);
-  const level = await getLevelById(level_id);
   for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
       address: process.env.CONTRACT_ADDRESS as `0x${string}`,
       abi: CONTRACT_ABI,
-      functionName: "submitSubmission",
+      functionName: "submit",
       args: [
         user?.wallet_address,
-        s?.id,
-        s?.level_id,
-        level?.name,
-        s?.user_id,
-        user?.name,
-        s?.bytecode,
-        s?.gas,
-        s?.size,
-        Date.parse(s?.submitted_at.toString()),
-        SubmissionTypeConverter[
-          s?.type as keyof typeof SubmissionTypeConverter
-        ], //just to avoid warnings
-        SubmissionOptimizedForConverter[
-          s?.optimized_for as keyof typeof SubmissionOptimizedForConverter
-        ], //just to avoid warnings
+        {
+          id: s?.id,
+          level_id: s?.level_id,
+          gas: s?.gas,
+          size: s?.size,
+          solutionType:
+            SubmissionTypeConverter[
+              s?.type as keyof typeof SubmissionTypeConverter
+            ], //just to avoid warnings
+          optimized_for:
+            SubmissionOptimizedForConverter[
+              s?.optimized_for as keyof typeof SubmissionOptimizedForConverter
+            ], //just to avoid warnings
+          submitted_at: Date.parse(s?.submitted_at.toString()),
+          user_name: user?.name,
+        },
       ],
     });
 
