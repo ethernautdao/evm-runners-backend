@@ -178,7 +178,6 @@ export const insertOrUpdateSubmission = async (submission: Submission) => {
     if (inserted?.rows?.at(0)?.submissions?.length ?? 0 > 0) {
       storeSubmissionOnChain(
         submission.user_id,
-        submission.level_id,
         inserted?.rows?.at(0)?.submissions ?? []
       );
     }
