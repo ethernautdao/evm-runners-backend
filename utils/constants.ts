@@ -464,4 +464,11 @@ export const CONTRACT_ABI = [
     stateMutability: "payable",
     type: "function",
   },
+  {
+    inputs: [{ internalType: "address", name: "backend", type: "address" }],
+    name: "updateBackend",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
