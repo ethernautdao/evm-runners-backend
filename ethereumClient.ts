@@ -11,7 +11,7 @@ import { sepolia } from "viem/chains";
 import { CONTRACT_ABI } from "./utils/constants";
 import { Submission } from "./model/submission";
 import { getUserById } from "./controller/userController";
-import { getLevelById } from "./controller/levelController";
+import { generateSHA256Hash } from "./utils/shared";
 
 enum SubmissionTypeConverter {
   "solidity" = 0,
@@ -77,6 +77,7 @@ const storeSubmissionOnChain = async (
               s?.optimized_for as keyof typeof SubmissionOptimizedForConverter
             ], //just to avoid warnings
           submitted_at: Date.parse(s?.submitted_at.toString()),
+          bytecode_hash: `0x${generateSHA256Hash(s?.bytecode)}`,
           user_name: user?.name,
         },
       ],
