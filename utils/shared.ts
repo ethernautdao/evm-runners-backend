@@ -1,4 +1,5 @@
 import { ETH_ADDRESS_REGEX } from "./constants";
+import * as crypto from 'crypto';
 
 export const isValidNumber = (number: any) => {
   let parsed = Number.parseInt(number);
@@ -15,4 +16,10 @@ export const formatAccessToken = (header: string) => {
 
 export const isValidWalletAddress = (address: string) => {
   return ETH_ADDRESS_REGEX.test(address);
+};
+
+export const generateSHA256Hash = (bytecode: string): string => {
+  const hash = crypto.createHash('sha256');
+  hash.update(bytecode, 'utf-8');
+  return hash.digest('hex');
 };

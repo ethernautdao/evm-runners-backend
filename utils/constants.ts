@@ -44,7 +44,11 @@ export const CONTRACT_ABI = [
   { inputs: [], name: "TokenAlreadyExists", type: "error" },
   { inputs: [], name: "TokenDoesNotExist", type: "error" },
   { inputs: [], name: "TransferFromIncorrectOwner", type: "error" },
-  { inputs: [], name: "TransferToNonERC721ReceiverImplementer", type: "error" },
+  {
+    inputs: [],
+    name: "TransferToNonERC721ReceiverImplementer",
+    type: "error",
+  },
   { inputs: [], name: "TransferToZeroAddress", type: "error" },
   { inputs: [], name: "Unauthorized", type: "error" },
   {
@@ -140,7 +144,12 @@ export const CONTRACT_ABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "user", type: "address" },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
       {
         indexed: true,
         internalType: "uint256",
@@ -154,7 +163,12 @@ export const CONTRACT_ABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "from", type: "address" },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
       { indexed: true, internalType: "address", name: "to", type: "address" },
       { indexed: true, internalType: "uint256", name: "id", type: "uint256" },
     ],
@@ -242,6 +256,7 @@ export const CONTRACT_ABI = [
       { internalType: "uint8", name: "solutionType", type: "uint8" },
       { internalType: "uint8", name: "optimized_for", type: "uint8" },
       { internalType: "uint64", name: "submitted_at", type: "uint64" },
+      { internalType: "bytes32", name: "bytecode_hash", type: "bytes32" },
       { internalType: "string", name: "user_name", type: "string" },
     ],
     stateMutability: "view",
@@ -413,6 +428,7 @@ export const CONTRACT_ABI = [
           { internalType: "uint8", name: "solutionType", type: "uint8" },
           { internalType: "uint8", name: "optimized_for", type: "uint8" },
           { internalType: "uint64", name: "submitted_at", type: "uint64" },
+          { internalType: "bytes32", name: "bytecode_hash", type: "bytes32" },
           { internalType: "string", name: "user_name", type: "string" },
         ],
         internalType: "struct EVMR.Submission",
