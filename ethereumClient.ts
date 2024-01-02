@@ -7,7 +7,7 @@ import {
   PublicClient,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { sepolia } from "viem/chains";
+import { optimism } from "viem/chains";
 import { CONTRACT_ABI } from "./utils/constants";
 import { Submission } from "./model/submission";
 import { getUserById } from "./controller/userController";
@@ -29,19 +29,28 @@ enum SubmissionOptimizedForConverter {
 let ethereumClient: PublicClient;
 let account: PrivateKeyAccount;
 let walletClient: WalletClient;
+let nonce: number;
 const transport = http(process.env.API_URL);
 
 const connect = async () => {
   try {
     account = privateKeyToAccount(`0x${process.env.PRIVATE_KEY}`);
-    ethereumClient = createPublicClient({
-      chain: sepolia,
+    //<any> seems to fix a viem error when working with optimism/base, etc..
+    ethereumClient = createPublicClient<any>({
+      batch: {
+        multicall: true,
+      },
+      chain: optimism,
       transport,
     });
 
     walletClient = createWalletClient({
-      chain: sepolia,
+      chain: optimism,
       transport,
+    });
+
+    nonce = await ethereumClient.getTransactionCount({
+      address: account.address,
     });
   } catch (error) {
     console.log("## ETHEREUM CLIENT CONNECT ERROR: ", error);
@@ -58,6 +67,7 @@ const storeSubmissionOnChain = async (
   for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
+      nonce: nonce,
       address: process.env.CONTRACT_ADDRESS as `0x${string}`,
       abi: CONTRACT_ABI,
       functionName: "submit",
@@ -83,6 +93,7 @@ const storeSubmissionOnChain = async (
       ],
     });
 
+    nonce++;
     await walletClient.writeContract(request);
   }
 };
