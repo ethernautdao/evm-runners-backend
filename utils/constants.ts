@@ -25,6 +25,9 @@ export const MIN_BLOCK_DIFFICULTY = 5.8750003716598352816469e22;
 /* ADDRESS REGEX */
 export const ETH_ADDRESS_REGEX: RegExp = /^0x[a-fA-F0-9]{40}$/;
 
+/* OPTIMISTIC ETHERSCAN */
+export const OPTIMISTIC_ETHERSCAN_TX = "https://optimistic.etherscan.io/tx/";
+
 /* ETHEREUM */
 export const CONTRACT_ABI = [
   {

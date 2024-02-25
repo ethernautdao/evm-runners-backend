@@ -8,10 +8,12 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { optimism } from "viem/chains";
-import { CONTRACT_ABI } from "./utils/constants";
+import { CONTRACT_ABI, OPTIMISTIC_ETHERSCAN_TX } from "./utils/constants";
 import { Submission } from "./model/submission";
 import { getUserById } from "./controller/userController";
 import { generateSHA256Hash } from "./utils/shared";
+import { sendMessage } from "./discordBot";
+import { getLevelById } from "./controller/levelController";
 
 enum SubmissionTypeConverter {
   "solidity" = 0,
@@ -61,9 +63,11 @@ connect();
 
 const storeSubmissionOnChain = async (
   user_id: number,
+  level_id: number,
   submissions: Submission[]
 ) => {
   const user = await getUserById(user_id);
+  const level = await getLevelById(level_id);
   for (const s of submissions) {
     const { request } = await ethereumClient.simulateContract({
       account: account,
@@ -94,7 +98,10 @@ const storeSubmissionOnChain = async (
     });
 
     nonce++;
-    await walletClient.writeContract(request);
+    const txHash = await walletClient.writeContract(request);
+    sendMessage(
+      `${user?.name} submitted a new solution for level ${level?.name}. [See the transaction here.](${OPTIMISTIC_ETHERSCAN_TX}${txHash})`
+    );
   }
 };
 
