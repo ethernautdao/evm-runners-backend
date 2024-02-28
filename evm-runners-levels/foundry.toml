@@ -4,7 +4,7 @@ out = 'out'
 libs = ['lib']
 
 ffi = true
-ignored_error_codes = [ "unused-param" ]
+ignored_error_codes = [ "unused-param", "shadowing", "license", "func-mutability" ]
 
 # Whether to append the metadata hash to the bytecode
 cbor_metadata = false
@@ -13,7 +13,7 @@ bytecode_hash = "none"
 verbosity = 3
 gas_limit = 30000000
 
-evm_version= "shangai"
+evm_version = "shanghai"
 
 [fuzz]
 runs = 512
