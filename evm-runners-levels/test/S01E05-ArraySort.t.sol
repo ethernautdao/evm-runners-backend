@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-
 import "src/interfaces/IArraySort.sol";
 
 contract ArraySortTestBase is Test {
@@ -56,6 +55,8 @@ contract ArraySortTestBase is Test {
     }
 
     function test_s01e05_gas(uint256 length) public {
+        vm.pauseGasMetering();
+
         length = bound(length, 16, 20);
 
         uint256[] memory arr = new uint256[](length);
@@ -64,6 +65,8 @@ contract ArraySortTestBase is Test {
                 uint256(keccak256(abi.encodePacked(block.timestamp, i))) %
                 2 ** 16;
         }
+
+        vm.resumeGasMetering();
 
         arraySort.arraySort(arr);
     }

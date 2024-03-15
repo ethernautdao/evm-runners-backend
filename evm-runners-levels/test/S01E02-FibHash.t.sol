@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-
 import "src/interfaces/IFibHash.sol";
 
 contract FibHashTestBase is Test {
@@ -39,8 +38,10 @@ contract FibHashTestBase is Test {
         assertEq(_fibhash(x, k), fibhash.fibhash(x, k));
     }
 
-    function test_s01e02_gas(uint256 x, uint8 k) public view {
+    function test_s01e02_gas(uint256 x, uint8 k) public {
+        vm.pauseGasMetering();
         vm.assume(k != 0);
+        vm.resumeGasMetering();
 
         fibhash.fibhash(x, k);
     }

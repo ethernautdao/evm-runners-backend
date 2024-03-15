@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-
 import "src/interfaces/IPrime.sol";
 
 contract PrimeTestBase is Test {
@@ -39,8 +38,11 @@ contract PrimeTestBase is Test {
         assertEq(_isPrime(n), prime.isPrime(n));
     }
 
-    function test_s01e04_gas(uint256 n) public view {
+    function test_s01e04_gas(uint256 n) public {
+        vm.pauseGasMetering();
         vm.assume(n < 100_000);
+        vm.resumeGasMetering();
+
         prime.isPrime(n);
     }
 
@@ -50,7 +52,7 @@ contract PrimeTestBase is Test {
     }
 
     // checks if a number is prime
-    function _isPrime(uint256 number) public pure returns (bool) {
+    function _isPrime(uint256 number) internal pure returns (bool) {
         if (number < 2) {
             return false;
         }
