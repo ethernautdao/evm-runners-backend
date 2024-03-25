@@ -146,6 +146,7 @@ const isValidSolution = async (bytecode: any, level_id: any) => {
         FOUNDRY_BLOCK_BASE_FEE_PER_GAS: `${generateRandomNumber(0, 200)}`,
       },
     });
+
     return {
       result: convertToSolutionFeedback(output),
       solutionError: undefined,
